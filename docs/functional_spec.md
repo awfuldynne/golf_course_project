@@ -11,8 +11,8 @@
 - Outputs:
   - pandas DataFrame with the requested data.
 
-- weather, retrieval/cleaning/prep
-- golf course -> city/state
-- model/analysis - GLM using table w/ columns built from Shotlink, weather data
-- data product - for example, one+ Jupyter notebooks
-- visualization?
+## weather, retrieval/cleaning/prep
+## golf course -> city/state
+## model/analysis - GLM using table w/ columns built from Shotlink, weather data
+## data product - for example, one+ Jupyter notebooks
+## visualization?

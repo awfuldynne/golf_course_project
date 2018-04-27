@@ -1,8 +1,9 @@
 # local data
 data_local/
 
-# Vim backup files
+# Vim backup and swap files
 *~
+*.swp
 
 # everything after here originally came from the GitHub default Python .gitignore
 # Byte-compiled / optimized / DLL files

@@ -9,8 +9,8 @@ data_local/
 # https://stackoverflow.com/questions/3041154/intellij-idea-9-10-what-folders-to-check-into-or-not-check-into-source-contro
 # and
 # https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
-.idea/workspace.xml
-.idea/tasks.xml
+**/.idea/workspace.xml
+**/.idea/tasks.xml
 
 # everything after here originally came from the GitHub default Python .gitignore
 # Byte-compiled / optimized / DLL files

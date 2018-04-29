@@ -2,7 +2,7 @@ import unittest
 
 from data import shotlink
 
-
+DATA_PATH = '../../golf_course_project_data'
 TEST_DATA_PATH = '../../golf_course_project_data/test'
 
 class ShotTests(unittest.TestCase):
@@ -24,9 +24,14 @@ class ShotTests(unittest.TestCase):
         for field_name, dtype in shotlink.shot_dtypes.items():
             self.assertEqual(dtype, df.dtypes[field_name])
 
+    def test_prepare_data_converts_date_field(self):
+        df = shotlink.get_shots([2017], TEST_DATA_PATH)
+        df = shotlink.prepare_shots(df)
+        self.assertEqual('datetime64[ns]', str(df['Date'].dtype))
+
 
 class ShotTestsIntegration(unittest.TestCase):
     """Tests for shot data, that take longer, including tests with actual data."""
     def test_get_shots_has_2017_actual_data(self):
-        df = shotlink.get_shots([2017])
+        df = shotlink.get_shots([2017], DATA_PATH)
         self.assertEqual(1214437, len(df))

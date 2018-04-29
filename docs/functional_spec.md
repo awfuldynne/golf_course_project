@@ -58,6 +58,7 @@ One of the limitations of this API is that to query the historical weather data 
 The analysis and modeling component of our project joins the outputs of the ShotLink, weather, and golf course location data to look for meaningful relationships between golfer performance and weather. Initial exploratory analysis utilizing data visualization and hypothesis testing will provide guidance for the predictive modeling. Example questions to explore include:
 - How does wind speed/rain/temperature affect average shots gained, if at all?
 - Which golfers have the highest shots gained given certain weather conditions?
+
 Subsequent models will look to predict shots gained (for individual golfers or as a tournament-wide aggregate) given a course and weather conditions. We'll utilize the scikit-learn package for model building and evaluation.  
 
 ###### Inputs

@@ -66,11 +66,13 @@ shot_dtypes = {
 
 def get_shots(years, data_path):
     """
-    Returns a dataframe containing a row per shot, for the specified year(s).
+    Loads shot data.
 
-    years: a sequence of integer year values for which data is desired; for
-           example [2017], or [2015, 2016], etc.
-    data_path: path to the location of the Shot20xx.TXT source files.
+    :param years: a sequence of integer year values for which data is desired; for
+                  example [2017], or [2015, 2016], etc.
+    :param data_path: path to the location of the Shot20xx.TXT source files.
+
+    :return: a DataFrame containing a row per shot, for the specified year(s).
     """
 
     # need na_values as below because 'Hole Score' has double spaced empty values
@@ -80,3 +82,15 @@ def get_shots(years, data_path):
                        dtype=shot_dtypes,
                        na_values='  ') for year in years]
     return pd.concat(dfs, ignore_index=True)
+
+def prepare_shots(df):
+    """
+    Prepares/cleans shot data. For example:
+    - Converts 'Date' field to datetime (takes a while, so we don't do it on load).
+
+    :param df: shot data DataFrame.
+    :return: Shot data DataFrame with cleaned fields.
+    """
+    df['Date'] = pd.to_datetime(df['Date'])
+
+    return df

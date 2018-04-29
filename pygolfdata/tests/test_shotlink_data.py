@@ -24,6 +24,11 @@ class ShotTests(unittest.TestCase):
         for field_name, dtype in shotlink.shot_dtypes.items():
             self.assertEqual(dtype, df.dtypes[field_name])
 
+    def test_prepare_data_converts_date_field(self):
+        df = shotlink.get_shots([2017], TEST_DATA_PATH)
+        df = shotlink.prepare_shots(df)
+        self.assertEqual('datetime64[ns]', str(df['Date'].dtype))
+
 
 class ShotTestsIntegration(unittest.TestCase):
     """Tests for shot data, that take longer, including tests with actual data."""

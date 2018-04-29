@@ -9,11 +9,11 @@
 Combines, cleans, and returns a single dataframe with ShotLink data, per kind of data. The ShotLink data comes from the PGA, and includes selected data per stroke, per hole, per round, and per event, as well as additional selected data per course, and for launch and trajectory data per shot via radar. The source data generally exists per year, so 'combining' refers to reading and combining multiple years. 'Cleaning' includes both things like renaming columns (the source data has column names with spaces in odd places, for example) and modifying data to make it work better with ML algorithms (like bucketing categorical variables, making missing data consistent so all missing data is represented in the same way, and so on). The code also uses pandas best practices for explicitly defining data types per field to manage the size of the data (in testing, a year's worth of shot data takes 2gb of RAM with the default settings but only 450mb when we specify data types explicitly).
 
 ###### Input(s):
-- The kind of data (stroke, hole, round, event, course, radar launch, radar trajectory. I'll likely do this as separate methods (get_shotlink_strokes, etc.).
-- Years requested, as a Python sequence of integers ([2007, 2008], etc.).
+- The kind of data (stroke, hole, round, event, course, radar launch, radar trajectory). Each kind of data will have it  own method (get_shots, get_holes, , etc.).
+- (sequence/list) Years requested, as a sequence of integers ([2007, 2008], etc.).
 
 ###### Output(s):
-- pandas DataFrame with the requested data.
+- (pandas DataFrame) The requested data, with columns from the underlying ShotLink data (tour, player number, player name, hole number, etc.).
 
 ## Weather Data
 

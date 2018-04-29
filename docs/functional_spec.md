@@ -52,7 +52,27 @@ The weather data component of our analysis retrieves, cleans, and archives histo
 #### Limitations
 One of the limitations of this API is that to query the historical weather data a user requires an API key. The base API key is limited to only 10 requests per minute and 500 requests per week. This can limit the amount of new data that can be processed and archived.
 
+## Data Analysis and Predictive Modeling
+
+###### What it does?
+The analysis and modeling component of our project joins the outputs of the ShotLink, weather, and golf course location data to look for meaningful relationships between golfer performance and weather. Initial exploratory analysis utilizing data visualization and hypothesis testing will provide guidance for the predictive modeling. Example questions to explore include:
+- How does wind speed/rain/temperature affect average shots gained, if at all?
+- Which golfers have the highest shots gained given certain weather conditions?
+Subsequent models will look to predict shots gained (for individual golfers or as a tournament-wide aggregate) given a course and weather conditions. We'll utilize the scikit-learn package for model building and evaluation.  
+
+###### Inputs
+- (pandas DataFrame) ShotLink data
+- (pandas DataFrame) Weather data
+- (pandas DataFrame) Course location data
+
+###### Outputs
+- (Jupyter notebook) Exploratory analysis
+	- Visualizations
+	- Hypothesis tests
+- (Jupyter notebook) Predictive model training, testing, and evaluation
+
+
+
 ## golf course -> city/state
-## model/analysis - GLM using table w/ columns built from Shotlink, weather data
 ## data product - for example, one+ Jupyter notebooks
 ## visualization?

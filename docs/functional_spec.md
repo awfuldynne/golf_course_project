@@ -76,4 +76,21 @@ Subsequent models will look to predict shots gained (for individual golfers or a
 
 ## golf course -> city/state
 ## data product - for example, one+ Jupyter notebooks
-## visualization?
+
+
+## Visualization
+
+###### What it does?
+
+The visualizations provide deeper insight into the effects discovered from the model. As such, the statistical model becomes an input to the charts, graphs, plots describing the degree of the effects, differences between their amplitudes, any interactions or correlations between them. 
+Though these are largely derived during the data analysis and model formation, it is a feature on its own to the user. 
+
+###### Inputs
+- (scikit-learn Generalized Linear Model) Built from Shotlink and weather data. 
+
+###### Outputs
+For each statistically significant effect, interaction, correlation:
+- a plot showing its effect on the response variable, shots gained on the y-axis.
+	- continuous predictors like "Temperature" will use a plot with a linear or logarithmic x-axis
+	- discrete predictors like "Is Raining" will use a box plot, with each category on the x-axis
+	- two-way interactions among variables will use contour plots, with the two on the x and y-axis, and shots gained on the contour. 

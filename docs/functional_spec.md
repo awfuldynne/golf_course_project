@@ -74,9 +74,24 @@ Subsequent models will look to predict shots gained (for individual golfers or a
 
 
 
-## golf course -> city/state
-## data product - for example, one+ Jupyter notebooks
+## ShotLink data - Weather data Connector
 
+###### What it does?
+
+There is a gap between ShotLink data, which provides the name of the tournament, and Weather Underground data, which requires the city and the state of where the tournament takes place. Unfortunately there is no dataset publicly available to bridge this gap. The only viable option is to scrape PGA Tournament Schedule website for this kind of information. We decided to use BeautifulSoup (BS) Python package to do this job because of its reliability and ease of use. Please see attached `pga_web_scraping_example.png` as an example screenshot of PGA Tournament website and its HTML elements.
+
+###### Inputs
+- (pandas DataFrame) ShotLink data
+- (HTML) PGA Tournament Schedule website
+
+###### Outputs
+- (pandas DataFrame) City & State data appended to ShotLink data 
+
+###### Packages
+- pandas
+- BeautifulSoup
+
+## data product - for example, one+ Jupyter notebooks
 
 ## Visualization
 

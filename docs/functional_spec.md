@@ -62,9 +62,9 @@ The analysis and modeling component of our project joins the outputs of the Shot
 Subsequent models will look to predict shots gained (for individual golfers or as a tournament-wide aggregate) given a course and weather conditions. We'll utilize the scikit-learn package for model building and evaluation.  
 
 ###### Input(s):
-- (pandas DataFrame) ShotLink data
-- (pandas DataFrame) Weather data
-- (pandas DataFrame) Course location data
+- (pandas DataFrame) Cleaned ShotLink data
+- (pandas DataFrame) Cleaned Weather data
+- (pandas DataFrame) Cleaned Course location data
 
 ###### Output(s):
 - (Jupyter notebook) Exploratory analysis

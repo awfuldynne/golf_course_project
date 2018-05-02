@@ -1,5 +1,9 @@
 # Use cases
 - Data scientists can analyze PGA ShotLink data and weather data, together.
+- Example research questions:
+	- How does the presence of rain/wind/cloud cover affect golfer performance? 
+	- How does intensity of rain/wind/cloud cover affect golfer performance?
+	- Which golfers are most affected by weather events?
 
 # Components
 

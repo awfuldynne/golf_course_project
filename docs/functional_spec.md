@@ -1,5 +1,9 @@
 # Use cases
 - Data scientists can analyze PGA ShotLink data and weather data, together.
+- Example research questions:
+	- How does the presence of rain/wind/cloud cover affect golfer performance? 
+	- How does intensity of rain/wind/cloud cover affect golfer performance?
+	- Which golfers are most affected by weather events?
 
 # Components
 
@@ -61,12 +65,12 @@ The analysis and modeling component of our project joins the outputs of the Shot
 
 Subsequent models will look to predict shots gained (for individual golfers or as a tournament-wide aggregate) given a course and weather conditions. We'll utilize the scikit-learn package for model building and evaluation.  
 
-###### Inputs
-- (pandas DataFrame) ShotLink data
-- (pandas DataFrame) Weather data
-- (pandas DataFrame) Course location data
+###### Input(s):
+- (pandas DataFrame) Cleaned ShotLink data
+- (pandas DataFrame) Cleaned Weather data
+- (pandas DataFrame) Cleaned Course location data
 
-###### Outputs
+###### Output(s):
 - (Jupyter notebook) Exploratory analysis
 	- Visualizations
 	- Hypothesis tests
@@ -79,14 +83,14 @@ Subsequent models will look to predict shots gained (for individual golfers or a
 
 There is a gap between ShotLink data, which provides the name of the tournament, and Weather Underground data, which requires the city and the state of where the tournament takes place. Unfortunately there is no dataset publicly available to bridge this gap. The only viable option is to scrape PGA Tournament Schedule website for this kind of information. We decided to use BeautifulSoup (BS) Python package to do this job because of its reliability and ease of use. Please see attached [pga_web_scraping_example.png](https://github.com/awfuldynne/golf_course_project/blob/master/docs/images/pga_web_scraping_example.png) as an example screenshot of PGA Tournament website and its HTML elements.
 
-###### Inputs
+###### Input(s):
 - (pandas DataFrame) ShotLink data
 - (HTML) PGA Tournament Schedule website
 
-###### Outputs
+###### Output(s):
 - (pandas DataFrame) City & State data appended to ShotLink data 
 
-###### Packages
+###### Package(s):
 - pandas
 - BeautifulSoup
 
@@ -97,10 +101,10 @@ There is a gap between ShotLink data, which provides the name of the tournament,
 The visualizations provide deeper insight into the effects discovered from the model. As such, the statistical model becomes an input to the charts, graphs, plots describing the degree of the effects, differences between their amplitudes, any interactions or correlations between them. 
 Though these are largely derived during the data analysis and model formation, it is a feature on its own to the user. 
 
-###### Inputs
+###### Input(s):
 - (scikit-learn Generalized Linear Model) Built from Shotlink and weather data. 
 
-###### Outputs
+###### Output(s):
 For each statistically significant effect, interaction, correlation:
 - a plot showing its effect on the response variable, shots gained on the y-axis.
 	- continuous predictors like "Temperature" will use a plot with a linear or logarithmic x-axis

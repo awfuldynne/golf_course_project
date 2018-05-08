@@ -77,13 +77,19 @@ class ShotTestsIntegration(unittest.TestCase):
         df = shotlink.get_shots([2017], DATA_PATH)
         self.assertEqual(1214437, len(df))
 
-    # TODO figure out why we have 99027 nulls for AMWindSpd
-    # def test_get_shots_augmented_has_courselevels_for_all_rows(self):
-    #     df = shotlink.get_shots_augmented([2017], DATA_PATH)
-    #     self.assertEqual(0, sum(df['AMWindSpd'].isnull()))
-    #     self.assertEqual(0, sum(df['AMWindDir'].isnull()))
-    #     self.assertEqual(0, sum(df['PMWindSpd'].isnull()))
-    #     self.assertEqual(0, sum(df['PMWindDir'].isnull()))
+    def test_get_shots_augmented_has_courselevels_for_all_possible_rows(self):
+        # the courselevels data for 2017 doesn't have wind data for every single possible
+        # course - at a quick glance, there are rows but no wind data for Erin Hills,
+        # and for four tournaments where some of the initial rounds are played on multiple
+        # course (for ex, the Pebble Beach Pro-Am, which is played on three courses at
+        # least, I think, for the first two days) there are no courselevels rows at all
+        # for the courses that are only used on Thursday and Friday; for now I'll just
+        # hardcode the expected nulls that I got from separate investigation
+        df = shotlink.get_shots_augmented([2017], DATA_PATH)
+        self.assertEqual(99027, sum(df['AMWindSpd'].isnull()))
+        self.assertEqual(99027, sum(df['AMWindDir'].isnull()))
+        self.assertEqual(99027, sum(df['PMWindSpd'].isnull()))
+        self.assertEqual(99430, sum(df['PMWindDir'].isnull()))
 
 
 class CourseLevelTests(unittest.TestCase):

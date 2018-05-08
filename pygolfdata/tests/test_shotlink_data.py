@@ -58,7 +58,16 @@ class ShotTests(unittest.TestCase):
         self.assertEqual(' 5-10', ted['PMWindSpd'])
         self.assertEqual('IW', ted['PMWindDir'])
 
-    # TODO check for no nulls, w/ test data
+    def test_get_shots_augmented_has_courselevels_for_all_rows(self):
+        df = shotlink.get_shots_augmented([2017], TEST_DATA_PATH)
+        self.assertEqual(0, sum(df['AMWindSpd'].isnull()))
+        self.assertEqual(0, sum(df['AMWindDir'].isnull()))
+        self.assertEqual(0, sum(df['PMWindSpd'].isnull()))
+        self.assertEqual(0, sum(df['PMWindDir'].isnull()))
+        # I'd rather do the following, to reduce duplication, but when I do I can't
+        # see which of the four fails, if one fails
+        # for field in ['AMWindSpd', 'AMWindDir', 'PMWindSpd', 'PMWindDir']:
+        #    self.assertEqual(0, sum(df[field].isnull()))
 
 
 
@@ -68,7 +77,14 @@ class ShotTestsIntegration(unittest.TestCase):
         df = shotlink.get_shots([2017], DATA_PATH)
         self.assertEqual(1214437, len(df))
 
-    # TODO check that we have no nulls after joining w/ augmented and all data - check here too w/ all data
+    # TODO figure out why we have 99027 nulls for AMWindSpd
+    # def test_get_shots_augmented_has_courselevels_for_all_rows(self):
+    #     df = shotlink.get_shots_augmented([2017], DATA_PATH)
+    #     self.assertEqual(0, sum(df['AMWindSpd'].isnull()))
+    #     self.assertEqual(0, sum(df['AMWindDir'].isnull()))
+    #     self.assertEqual(0, sum(df['PMWindSpd'].isnull()))
+    #     self.assertEqual(0, sum(df['PMWindDir'].isnull()))
+
 
 class CourseLevelTests(unittest.TestCase):
     """Tests for course level data, generally using the data subsets in the data test directory, for speed."""

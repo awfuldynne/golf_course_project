@@ -77,7 +77,7 @@ courselevel_dtypes = collections.OrderedDict({
     'AMWindSpd': 'category',
     'AMWindDir': 'category',
     'PMWindSpd': 'category',
-    'PMWind Dir': 'category',
+    'PMWindDir': 'category',
     'ScorecardYdg': np.uint16,
     'ActualYdg': np.float32, # has some NaNs
     'Par': np.uint8,
@@ -111,6 +111,31 @@ def get_shots(years, data_path):
                      dtype=shot_dtypes,
                      na_values='  ')
 
+def get_shots_augmented(years, data_path):
+    """
+    Loads shot data, augmented with data from other exports - for now, with weather
+    data from the 'courselevels' export.
+
+    :param years: a sequence of integer year values for which data is desired; for
+                  example [2017], or [2015, 2016], etc.
+    :param data_path: path to the location of the Shot20xx.TXT source files.
+
+    :return: a DataFrame containing a row per shot, for the specified year(s).
+    """
+    shots = get_shots(years, data_path)
+    courselevels = get_courselevels(years, data_path)
+
+    courselevels_cols_to_keep = ['AMWindSpd', 'PMWindSpd', 'AMWindDir', 'PMWindDir',
+                                 'Year', 'CourseNum', 'Round', 'Hole']
+
+    # I think CourseNum captures the tournament, for courses that have multiple tournaments
+    # (per the shot detail field def doc, 'courses played in more than one event will receive
+    #  a number for each event), so we don't need to join on something tournament-related
+    df=pd.merge(shots, courselevels[courselevels_cols_to_keep],
+                how='left', on=['Year', 'CourseNum', 'Round', 'Hole'])
+    return df
+
+
 def prepare_shots(df):
     """
     Prepares/cleans shot data. For example:
@@ -140,3 +165,15 @@ def get_courselevels(years, data_path):
     """
     return get_years('CourseLevel', data_path, years,
                      header=0, names=courselevel_dtypes.keys(), dtype=courselevel_dtypes)
+
+
+def get_specific_shot(df, last_name, first_name, year, tournament, course, round, hole, shot):
+    """Convenience method to get a single row/shot. df is a dataframe with shot data."""
+    return df[(df['PlayerLastName'] == last_name) &
+              (df['PlayerFirstName'] == first_name) &
+              (df['Year'] == year) &
+              (df['TournamentName'] == tournament) &
+              (df['CourseName'] == course) &
+              (df['Round'] == round) &
+              (df['Hole'] == hole) &
+              (df['Shot'] == shot)].iloc[0]  # TODO exception/something if more than one row?

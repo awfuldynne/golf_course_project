@@ -1,5 +1,9 @@
 # Use cases
 - Data scientists can analyze PGA ShotLink data and weather data, together.
+- Example research questions:
+	- How does the presence of rain/wind/cloud cover affect golfer performance? 
+	- How does intensity of rain/wind/cloud cover affect golfer performance?
+	- Which golfers are most affected by weather events?
 
 # Components
 
@@ -62,9 +66,9 @@ The analysis and modeling component of our project joins the outputs of the Shot
 Subsequent models will look to predict shots gained (for individual golfers or as a tournament-wide aggregate) given a course and weather conditions. We'll utilize the scikit-learn package for model building and evaluation.  
 
 ###### Input(s):
-- (pandas DataFrame) ShotLink data
-- (pandas DataFrame) Weather data
-- (pandas DataFrame) Course location data
+- (pandas DataFrame) Cleaned ShotLink data
+- (pandas DataFrame) Cleaned Weather data
+- (pandas DataFrame) Cleaned Course location data
 
 ###### Output(s):
 - (Jupyter notebook) Exploratory analysis

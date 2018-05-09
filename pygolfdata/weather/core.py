@@ -17,10 +17,10 @@ class WeatherDateApi:
     weather data.
 
     DataFrame Columns:
-    ["Date", "Hour", "Summary", "DegreesFahrenheit", "Humidity", "Visibility", "WindBearing", "WindGust", "WindSpeed"]
+    ['Date', 'Hour', 'Summary', 'DegreesFahrenheit', 'Humidity', 'Visibility', 'WindBearing', 'WindGust', 'WindSpeed']
     """
-    COLUMNS = ["Date", "Hour", "Summary", "DegreesFahrenheit", "Humidity", "Visibility", "WindBearing", "WindGust",
-               "WindSpeed"]
+    COLUMNS = ['Date', 'Hour', 'Summary', 'DegreesFahrenheit', 'Humidity', 'Visibility', 'WindBearing', 'WindGust',
+               'WindSpeed']
 
     def __init__ (self, api_key, weather_history_file_path):
         self.__api_key = api_key
@@ -55,10 +55,10 @@ class WeatherDateApi:
         """
         # Validate input
         if not (-90 <= latitude <= 90):
-            raise ValueError("Latitude is outside the expected range")
+            raise ValueError('Latitude is outside the expected range')
 
         if not (-180 <= longitude <= 180):
-            raise ValueError("Longitude is outside the expected range")
+            raise ValueError('Longitude is outside the expected range')
 
         start_epoch_time = time.mktime(start_date)
         end_epoch_time = time.mktime(end_date)
@@ -70,7 +70,7 @@ class WeatherDateApi:
             response = self.__get_weather_json_darksky(latitude, longitude, loop_epoch_time)
 
             # Iterate through response and clean
-            for hourly_snapshot in response["hourly"]["data"]:
+            for hourly_snapshot in response['hourly']['data']:
                 print(hourly_snapshot)
 
             # Append to DataFrame
@@ -98,12 +98,12 @@ class WeatherDateApi:
         try:
             json_response = json.loads(response)
         except:
-            print("Bad things have happened")
+            print('Bad things have happened')
         return json_response
 
     def __get_weather_series_from_response(self, response):
         """ """
-        row_data = ["date", 0, response["summary"], response["temperature"], response["humidity"],
-                    response["visibility"], response["windBearing"], response["windGust"], response["windSpeed"]]
+        row_data = ['date', 0, response['summary'], response['temperature'], response['humidity'],
+                    response['visibility'], response['windBearing'], response['windGust'], response['windSpeed']]
         row = pd.Series(row_data, index=self.COLUMNS)
         return row

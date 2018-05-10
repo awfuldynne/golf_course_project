@@ -12,6 +12,9 @@ data_local/
 **/.idea/workspace.xml
 **/.idea/tasks.xml
 
+# MacOS working files
+.DS_Store
+
 # everything after here originally came from the GitHub default Python .gitignore
 # Byte-compiled / optimized / DLL files
 __pycache__/

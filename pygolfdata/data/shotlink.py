@@ -135,6 +135,27 @@ def get_shots_augmented(years, data_path):
                 how='left', on=['Year', 'CourseNum', 'Round', 'Hole'])
     return df
 
+def get_active_course_dates(years, data_path):
+    """
+    Provides data summarizing which courses hosted tournaments on which days, for
+    use in retrieving weather data (because we want weather for each of these days
+    in these locations).
+
+    :param years: a sequence of integer year values for which data is desired; for
+                  example [2017], or [2015, 2016], etc.
+    :param data_path: path to the location of the Shot20xx.TXT source files.
+
+    :return: a DataFrame containing a row per course/day combination.
+    """
+    shots = get_shots(years, data_path)
+    shots = prepare_shots(shots) # want the date conversion
+
+    # messy - better way? this groups and uses size to get a series, and then drops the
+    # counted number of rows since we don't want them; alternatives of using the groupby
+    # object directly require handling the fact that its keys are unordered and so also
+    # a few lines of code
+    grouped = shots.groupby(['CourseName', 'Date'], as_index=True).size()
+    return pd.DataFrame(grouped).reset_index(level=[0,1])[['CourseName', 'Date']]
 
 def prepare_shots(df):
     """

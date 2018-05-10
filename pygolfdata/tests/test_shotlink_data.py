@@ -1,4 +1,7 @@
 import unittest
+from datetime import datetime
+
+import pandas as pd
 
 from data import shotlink
 
@@ -69,6 +72,12 @@ class ShotTests(unittest.TestCase):
         # for field in ['AMWindSpd', 'AMWindDir', 'PMWindSpd', 'PMWindDir']:
         #    self.assertEqual(0, sum(df[field].isnull()))
 
+    def test_get_active_course_dates(self):
+        df = shotlink.get_active_course_dates([2017], TEST_DATA_PATH)
+        self.assertIsInstance(df, pd.DataFrame)
+        self.assertEqual(1, len(df))
+        self.assertEqual('Silverado Resort and Spa North', df.iloc[0]['CourseName'])
+        self.assertEqual(datetime(2016, 10, 13), df.iloc[0]['Date'])
 
 
 class ShotTestsIntegration(unittest.TestCase):
@@ -91,6 +100,12 @@ class ShotTestsIntegration(unittest.TestCase):
         self.assertEqual(99027, sum(df['PMWindSpd'].isnull()))
         self.assertEqual(99430, sum(df['PMWindDir'].isnull()))
 
+    # this one takes a long time because prepare_data takes a long time (because converting
+    # the text dates to datetime instances takes a long time)
+    def test_get_active_course_dates(self):
+        df = shotlink.get_active_course_dates([2017], DATA_PATH)
+        self.assertEqual(183, len(df))
+        self.assertEqual(48, len(df['CourseName'].unique()))
 
 class CourseLevelTests(unittest.TestCase):
     """Tests for course level data, generally using the data subsets in the data test directory, for speed."""

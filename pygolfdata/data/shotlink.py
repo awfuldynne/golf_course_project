@@ -1,4 +1,5 @@
 import collections
+from datetime import datetime
 
 import pandas as pd
 import numpy as np
@@ -169,6 +170,12 @@ def prepare_shots(df):
     # the format string speeds this up by 13x - one year takes 13s vs ~2:45; further
     # 10s of the 13s is loading from csv, so this is really 3s vs 156s or ~52x
 
+    # the 2011 data has one row with a 12/30/1899 date that should be 3/3/2011
+    df.loc[(df['PlayerLastName'] == 'Funk') & (df['PlayerFirstName'] == 'Fred') &
+           (df['Year'] == 2011) & (df['TournamentName'] == 'The Honda Classic') &
+           (df['CourseName'] == 'PGA National (Champion)') & (df['Round'] == 1) &
+           (df['Hole'] == 1) & (df['Shot'] == 1), 'Date'] = datetime(2011, 3, 3)
+
     return df
 
 
@@ -192,11 +199,18 @@ def get_courselevels(years, data_path):
 
 def get_specific_shot(df, last_name, first_name, year, tournament, course, round, hole, shot):
     """Convenience method to get a single row/shot. df is a dataframe with shot data."""
-    return df[(df['PlayerLastName'] == last_name) &
+    shot = df[(df['PlayerLastName'] == last_name) &
               (df['PlayerFirstName'] == first_name) &
               (df['Year'] == year) &
               (df['TournamentName'] == tournament) &
               (df['CourseName'] == course) &
               (df['Round'] == round) &
               (df['Hole'] == hole) &
-              (df['Shot'] == shot)].iloc[0]  # TODO exception/something if more than one row?
+              (df['Shot'] == shot)]
+
+    if len(shot) == 0:
+        raise ValueError("No shot found.")
+    elif len(shot) > 1:
+        raise ValueError("Multiple shots found.")
+    else:
+        return shot.iloc[0]

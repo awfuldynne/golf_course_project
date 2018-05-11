@@ -108,6 +108,15 @@ class ShotTestsIntegration(unittest.TestCase):
         self.assertEqual(183, len(df))
         self.assertEqual(48, len(df['CourseName'].unique()))
 
+    def test_prepare_data_fixes_Fred_Funk_bad_date(self):
+        # the 2011 data has one row with a 12/30/1899 date that should be 3/3/2011
+        df = shotlink.get_shots([2011], DATA_PATH)
+        df = shotlink.prepare_shots(df)
+        fred = shotlink.get_specific_shot(df, 'Funk', 'Fred', 2011, 'The Honda Classic',
+                                          'PGA National (Champion)', 1, 1, 1)
+        self.assertEqual(datetime(2011, 3, 3), fred['Date'])
+
+
 class CourseLevelTests(unittest.TestCase):
     """Tests for course level data, generally using the data subsets in the data test directory, for speed."""
     def test_get_courselevels_has_2017_data(self):

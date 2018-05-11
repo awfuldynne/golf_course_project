@@ -62,20 +62,25 @@ class WeatherDateApi:
         if not (-180 <= longitude <= 180):
             raise ValueError('Longitude is outside the expected range')
 
-        epoch_time = time.mktime(app_date.timetuple())
+        if ((self.__df['Date'] == app_date.strftime('%Y-%m-%d'))
+                & (self.__df['Latitude'] == latitude)
+                & (self.__df['Longitude'] == longitude)).any():
+            print("Ignoring request, data already exists")
+        else:
+            epoch_time = time.mktime(app_date.timetuple())
 
-        # Retrieve data from DarkSky API
-        response = self.__get_weather_json_darksky(latitude, longitude, epoch_time)
+            # Retrieve data from DarkSky API
+            response = self.__get_weather_json_darksky(latitude, longitude, epoch_time)
 
-        # Iterate through response and append to DataFrame
-        for hourly_snapshot in response['hourly']['data']:
-            self.__df =\
-                self.__df.append(self.__get_weather_series_from_response(latitude, longitude, hourly_snapshot),
-                                 ignore_index=True)
+            # Iterate through response and append to DataFrame
+            for hourly_snapshot in response['hourly']['data']:
+                self.__df =\
+                    self.__df.append(self.__get_weather_series_from_response(latitude, longitude, hourly_snapshot),
+                                     ignore_index=True)
 
-        # If write_new_csv is True, write out the updated DF
-        if write_new_csv:
-            self.__df.to_csv(self.__file_path, index=False)
+            # If write_new_csv is True, write out the updated DF
+            if write_new_csv:
+                self.__df.to_csv(self.__file_path, index=False)
 
         return self.__df
 
@@ -91,7 +96,6 @@ class WeatherDateApi:
 
     def __get_weather_series_from_response(self, latitude, longitude, response):
         """ """
-        print(response)
         response_keys = response.keys()
 
         date_time = datetime.fromtimestamp(response['time'])

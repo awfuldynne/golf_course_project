@@ -165,7 +165,9 @@ def prepare_shots(df):
     :param df: shot data DataFrame.
     :return: Shot data DataFrame with cleaned fields.
     """
-    df['Date'] = pd.to_datetime(df['Date'])
+    df['Date'] = pd.to_datetime(df['Date'], format='%m/%d/%Y')
+    # the format string speeds this up by 13x - one year takes 13s vs ~2:45; further
+    # 10s of the 13s is loading from csv, so this is really 3s vs 156s or ~52x
 
     return df
 

@@ -35,6 +35,7 @@ class ShotTests(unittest.TestCase):
         df = shotlink.get_shots([2017], TEST_DATA_PATH)
         df = shotlink.prepare_shots(df)
         self.assertEqual('datetime64[ns]', str(df['Date'].dtype))
+        self.assertEqual(datetime(2016, 10, 13), df['Date'][0])
 
     def test_get_shots_augmented_has_course_level_data(self):
         # for now I'll only check a few columns - I don't know that we need all of them

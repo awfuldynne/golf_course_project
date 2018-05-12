@@ -7,7 +7,6 @@ Classes:
         Class that leverages the DarkSky API to extract hourly weather data per day. Manages a pandas DataFrame and
         also writes the DataFrame out to CSV to preserve already gathered weather data.
 """
-from datetime import datetime
 import time
 import os
 import pandas as pd
@@ -27,7 +26,7 @@ class WeatherDateApi:
     COLUMNS = ['Date', 'Hour', 'Latitude', 'Longitude', 'Summary', 'DegreesFahrenheit', 'Humidity', 'Visibility',
                'WindBearing', 'WindGust', 'WindSpeed', "PrecipitationIntensity", "PrecipitationType"]
 
-    def __init__ (self, api_key, weather_history_file_path):
+    def __init__(self, api_key, weather_history_file_path):
         self.__api_key = api_key
         self.__file_path = weather_history_file_path
 
@@ -73,10 +72,15 @@ class WeatherDateApi:
             response = self.__get_weather_json_darksky(latitude, longitude, epoch_time)
 
             # Iterate through response and append to DataFrame
-            for hourly_snapshot in response['hourly']['data']:
-                self.__df =\
-                    self.__df.append(self.__get_weather_series_from_response(latitude, longitude, hourly_snapshot),
-                                     ignore_index=True)
+            for hour in range(0, len(response['hourly']['data'])):
+                self.__df = \
+                    self.__df.append(
+                        self.__get_weather_series_from_response(app_date.strftime('%Y-%m-%d'),
+                                                                hour,
+                                                                latitude,
+                                                                longitude,
+                                                                response['hourly']['data'][hour]),
+                        ignore_index=True)
 
             # If write_new_csv is True, write out the updated DF
             if write_new_csv:
@@ -90,17 +94,23 @@ class WeatherDateApi:
         return df
 
     def __get_weather_json_darksky(self, latitude, longitude, epoch_time):
-        """ """
+        """ Calls the DarkSky API with the given latitude, longitude and epoch time to retrieve historical weather data.
+
+        :param latitude: Float value representing latitude
+        :param longitude: Float value representing longitude
+        :param epoch_time: Numeric value representing
+        :return: A darksky.forecast.Forecast object
+
+        """
         response = forecast(self.__api_key, latitude, longitude, int(epoch_time))
         return response
 
-    def __get_weather_series_from_response(self, latitude, longitude, response):
+    def __get_weather_series_from_response(self, local_date, hour, latitude, longitude, response):
         """ """
         response_keys = response.keys()
 
-        date_time = datetime.fromtimestamp(response['time'])
-        row_data = [date_time.strftime('%Y-%m-%d'),
-                    date_time.hour,
+        row_data = [local_date,
+                    hour,
                     latitude,
                     longitude,
                     response['summary'] if 'summary' in response_keys else None,
@@ -114,3 +124,4 @@ class WeatherDateApi:
                     response['precipType'] if 'precipType' in response_keys else None]
         row = pd.Series(row_data, index=self.COLUMNS)
         return row
+

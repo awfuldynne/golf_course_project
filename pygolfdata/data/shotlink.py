@@ -162,6 +162,8 @@ def prepare_shots(df):
     """
     Prepares/cleans shot data. For example:
     - Converts 'Date' field to datetime (takes a while, so we don't do it on load).
+    - Fixes a particular incorrect date in the 2011 data.
+    - Adds a 'ShotDateAndTime' field that combines the date and time data
 
     :param df: shot data DataFrame.
     :return: Shot data DataFrame with cleaned fields.
@@ -175,6 +177,9 @@ def prepare_shots(df):
            (df['Year'] == 2011) & (df['TournamentName'] == 'The Honda Classic') &
            (df['CourseName'] == 'PGA National (Champion)') & (df['Round'] == 1) &
            (df['Hole'] == 1) & (df['Shot'] == 1), 'Date'] = datetime(2011, 3, 3)
+
+    df['ShotDateAndTime'] = pd.to_datetime(df['Date'].astype(str) + ' ' +
+                                           df['Time'].astype(str).str.zfill(4), format='%Y-%m-%d %H%M')
 
     return df
 

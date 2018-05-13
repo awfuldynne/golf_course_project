@@ -37,6 +37,12 @@ class ShotTests(unittest.TestCase):
         self.assertEqual('datetime64[ns]', str(df['Date'].dtype))
         self.assertEqual(datetime(2016, 10, 13), df['Date'][0])
 
+    def test_prepare_adds_combined_date_and_time(self):
+        df = shotlink.get_shots([2017], TEST_DATA_PATH)
+        df = shotlink.prepare_shots(df)
+        self.assertIn('ShotDateAndTime', df.columns)
+        self.assertEqual(datetime(2016, 10, 13, 12, 41), df.iloc[0]['ShotDateAndTime'])
+
     def test_get_shots_augmented_has_course_level_data(self):
         # for now I'll only check a few columns - I don't know that we need all of them
         # when combining, but I'm guessing we could use these at least

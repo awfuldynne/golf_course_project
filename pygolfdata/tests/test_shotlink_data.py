@@ -57,6 +57,8 @@ class ShotTests(unittest.TestCase):
         self.assertIn('PMWindSpd', df.columns)
         self.assertIn('AMWindDir', df.columns)
         self.assertIn('PMWindDir', df.columns)
+        # I'd rather call assertIn once with a list of strings to reduce duplication, but when I do I can't
+        # see which of the four fails, if one fails; instead I'll call each explicitly
 
     def test_get_shots_augmented_joins_correctly(self):
         # just check a few of the joins

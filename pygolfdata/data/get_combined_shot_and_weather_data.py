@@ -10,7 +10,7 @@ import shotlink
 def main():
     data_path = '../../../golf_course_project_data'
 
-    START_YEAR = 2012
+    START_YEAR = 2016
     END_YEAR = 2016
     years = range(START_YEAR, END_YEAR + 1)
 

@@ -2,6 +2,7 @@ import unittest
 from datetime import datetime
 
 import pandas as pd
+import numpy as np
 
 from data import shotlink
 
@@ -93,6 +94,23 @@ class ShotTests(unittest.TestCase):
         self.assertEqual(1, len(df))
         self.assertEqual('Silverado Resort and Spa North', df.iloc[0]['CourseName'])
         self.assertEqual(datetime(2016, 10, 13), df.iloc[0]['Date'])
+
+    def test_module_has_combined_dtypes(self):
+        # check a few selected fields, not all
+        self.assertIn('PlayerFirstName', shotlink.combined_dtypes.keys())
+        self.assertEqual('category', shotlink.combined_dtypes['PlayerFirstName'])
+        self.assertIn('PlayerName', shotlink.combined_dtypes.keys())
+        self.assertEqual('category', shotlink.combined_dtypes['PlayerName'])
+        self.assertIn('DegreesFahrenheit', shotlink.combined_dtypes.keys())
+        self.assertEqual(np.float32, shotlink.combined_dtypes['DegreesFahrenheit'])
+
+    def test_combined_data_from_file_and_dtypes(self):
+        df = shotlink.get_combined_data_from_file(f'{TEST_DATA_PATH}/combined_shots_and_weather_2016_2016.csv')
+        # test selected columns are ok w/ data types
+        self.assertEqual('datetime64[ns]', str(df['WeatherDateAndHour'].dtype))
+        self.assertEqual('float32', str(df['Humidity'].dtype))
+        self.assertEqual('category', str(df['PlayerName'].dtype))
+        self.assertEqual('uint8', str(df['Shot'].dtype))
 
 
 class ShotTestsIntegration(unittest.TestCase):

@@ -89,6 +89,31 @@ courselevel_dtypes = collections.OrderedDict({
     'RoughGrass': 'category',
     'ExtraColumn': object})
 
+# generate combined_dtypes for use when loading from full/combined data set
+# this dict has more than we actually use, since we just pull in the two dicts
+# from above and then add the weather columns; the datetime cols aren't defined
+# here - these stay object and then are converted to datetime during parsing,
+# likely on the read_csv call (but could be w/ something like to_datetime)
+combined_dtypes = shot_dtypes.copy()
+combined_dtypes.update(courselevel_dtypes)
+combined_dtypes.update({
+    'PlayerName': 'category',
+    'Hour': np.uint8,
+    'Latitude': np.float32,
+    'Longitude': np.float32,
+    'Summary': 'category',
+    'DegreesFahrenheit': np.float32,
+    'Humidity': np.float32,
+    'Visibility': np.float32,
+    'WindBearing': np.float32,
+    'WindGust': np.float32,
+    'WindSpeed': np.float32,
+    'PrecipitationIntensity': np.float32,
+    'PrecipitationType': 'category',
+    'CourseName_weather': 'category' })
+
+combined_date_cols = ['Date_shots', 'Date_weather', 'ShotDateAndTime', 'WeatherDateAndHour']
+
 
 def get_years(type_prefix, data_path, years, **kwargs):
     """Module internal function to retrieve specified data; called by get_shots, etc."""
@@ -186,6 +211,9 @@ def prepare_shots(df):
 
     return df
 
+def get_combined_data_from_file(filename):
+    """Load combined shot and weather data from the specified file."""
+    return pd.read_csv(filename, dtype=combined_dtypes, parse_dates=combined_date_cols, infer_datetime_format=True)
 
 def get_courselevels(years, data_path):
     """

@@ -10,7 +10,7 @@ import shotlink
 def main():
     data_path = '../../../golf_course_project_data'
 
-    START_YEAR = 2016
+    START_YEAR = 2012
     END_YEAR = 2016
     years = range(START_YEAR, END_YEAR + 1)
 
@@ -19,9 +19,7 @@ def main():
     weather = pd.read_csv(f'{data_path}/pga_tour_weather_data.csv')
     print(f'Loaded weather data with {len(weather)} rows and {len(weather.columns)} columns.')
 
-    # the data can have hour values of 24 (at least at one time), when normal changes to daylight savings
-    weather = weather[weather['Hour'] != 24]
-
+    # create datetime col from weather data, for join
     weather['WeatherDateAndHour'] = pd.to_datetime(weather['Date'] + ' ' + weather['Hour'].astype(str).str.zfill(2))
 
     shots = shotlink.get_shots_augmented(years, data_path)
@@ -46,7 +44,9 @@ def main():
         zip_ref.write(csv_filename)
 
     print('Copying...')
-    shutil.copy2(zip_filename, data_path) # copy2 allows dest to be a dir (poorly named function)
+    # copy both csv and zip to data location, former allows immediate use on this machine w/o unzip
+    shutil.copy2(csv_filename, data_path) # copy2 allows dest to be a dir (poorly named function)
+    shutil.copy2(zip_filename, data_path)
 
     print(f'Done at {datetime.now()}.')
 

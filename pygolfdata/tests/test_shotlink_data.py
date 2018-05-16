@@ -43,6 +43,12 @@ class ShotTests(unittest.TestCase):
         self.assertIn('ShotDateAndTime', df.columns)
         self.assertEqual(datetime(2016, 10, 13, 12, 41), df.iloc[0]['ShotDateAndTime'])
 
+    def test_prepare_adds_combined_player_name(self):
+        df = shotlink.get_shots([2017], TEST_DATA_PATH)
+        df = shotlink.prepare_shots(df)
+        self.assertEqual('Phil Mickelson', df.iloc[0]['PlayerName'])
+        self.assertEqual('Charles Howell III', df.iloc[998]['PlayerName'])
+
     def test_get_shots_augmented_has_course_level_data(self):
         # for now I'll only check a few columns - I don't know that we need all of them
         # when combining, but I'm guessing we could use these at least

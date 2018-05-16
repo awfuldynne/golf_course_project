@@ -164,6 +164,7 @@ def prepare_shots(df):
     - Converts 'Date' field to datetime (takes a while, so we don't do it on load).
     - Fixes a particular incorrect date in the 2011 data.
     - Adds a 'ShotDateAndTime' field that combines the date and time data
+    - Combines player first and last names into a single PlayerName field.
 
     :param df: shot data DataFrame.
     :return: Shot data DataFrame with cleaned fields.
@@ -180,6 +181,8 @@ def prepare_shots(df):
 
     df['ShotDateAndTime'] = pd.to_datetime(df['Date'].astype(str) + ' ' +
                                            df['Time'].astype(str).str.zfill(4), format='%Y-%m-%d %H%M')
+
+    df['PlayerName'] = df.apply(lambda r: r['PlayerFirstName'] + ' ' + r['PlayerLastName'], axis=1)
 
     return df
 

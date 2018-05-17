@@ -1,4 +1,6 @@
 # pygolfdata
+[![Build Status](https://travis-ci.org/awfuldynne/golf_course_project.svg?branch=master)](https://travis-ci.org/awfuldynne/golf_course_project)
+
 Pygolfdata is a tool to help users interested in correlating [PGA ShotLink](https://www.pgatour.com/stats/shotlinkintelligence/overview.html) data with weather data. Weather observations are taken from a historical weather API that provides hourly snapshots. 
 
 # Limitations

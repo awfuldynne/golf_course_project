@@ -11,6 +11,56 @@ branches:
     only:
         - master
 
+# Travis does the clone before anything (as far as I 
+# tell), but we need to set up the key first; I'll turn
+# off automatic recursion into submodules and then 
+# do it manually after the key is available
+git:
+    submodules: false
+    
+# now we can decrypt the key and set it up, then recurse
+# into the submodule; we also unzip the zip files - the
+# lines below are a bit messy, since we run unzip.py from 
+# the submodule 'data' dir, and then have to go back to 
+# the original directory so the rest of the build works
+before_install:
+    - openssl aes-256-cbc -K $encrypted_8db6aac11b1c_key -iv $encrypted_8db6aac11b1c_iv -in TravisDeployKey.enc -out
+      TravisDeployKey -d
+    - chmod 600 TravisDeployKey
+    - eval "$(ssh-agent -s)"
+    - ssh-add TravisDeployKey
+    - git submodule update --init --recursive
+    - pwd
+    - pushd data
+    - pwd
+    - python unzip.py
+    - popd
+    - pwd
+
+# list of commands to run to setup the environment
+install:
+    - pip install coverage
+    - pip install coveralls
+    - pip install pylint
+    - pip install -r requirements.txt
+
+# a list of commands to run before the main script
+#before_script:
+#    - "pylint pygolfdata"
+
+# the actual commands to run
+script:
+    - coverage run -m unittest discover
+
+# generate a coverage report to send to back to user
+after_success:
+    - coverage report
+    - coveralls
+
+
+
+
+
 # list of commands to run to setup the environment
 install:
     - pip install coverage

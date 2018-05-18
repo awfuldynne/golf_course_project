@@ -30,12 +30,9 @@ before_install:
     - eval "$(ssh-agent -s)"
     - ssh-add TravisDeployKey
     - git submodule update --init --recursive
-    - pwd
     - pushd data
-    - pwd
     - python unzip.py
     - popd
-    - pwd
 
 # list of commands to run to setup the environment
 install:
@@ -47,31 +44,6 @@ install:
 # a list of commands to run before the main script
 #before_script:
 #    - "pylint pygolfdata"
-
-# the actual commands to run
-script:
-    - coverage run -m unittest discover
-
-# generate a coverage report to send to back to user
-after_success:
-    - coverage report
-    - coveralls
-
-
-
-
-
-# list of commands to run to setup the environment
-install:
-    - pip install coverage
-    - pip install coveralls
-    - pip install pylint
-    - pip install -r requirements.txt
-
-
-# a list of commands to run before the main script
-before_script:
-    - "pylint pygolfdata"
 
 # the actual commands to run
 script:

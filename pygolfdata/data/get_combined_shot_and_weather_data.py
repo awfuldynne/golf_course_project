@@ -8,7 +8,7 @@ import shotlink
 
 
 def main():
-    data_path = '../../../golf_course_project_data'
+    data_path = '../data'
 
     START_YEAR = 2012
     END_YEAR = 2016

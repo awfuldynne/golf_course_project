@@ -4,7 +4,7 @@ from datetime import datetime
 import pandas as pd
 import numpy as np
 
-DATA_PATH = '../../golf_course_project_data'
+DATA_PATH = '../data'
 
 shot_dtypes = collections.OrderedDict({
     'TourCode': 'category',

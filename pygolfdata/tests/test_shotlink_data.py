@@ -9,8 +9,8 @@ from data import shotlink
 # DATA_PATH points to the full data, TEST_DATA_PATH to files w/ the same
 # name but with a fraction of the rows, so tests run faster - as of this writing
 # the content is the first 1000 rows of the full data
-DATA_PATH = '../../golf_course_project_data'
-TEST_DATA_PATH = '../../golf_course_project_data/test'
+DATA_PATH = '../data'
+TEST_DATA_PATH = '../data/test'
 
 class ShotTests(unittest.TestCase):
     """Tests for shot data, generally using the data subsets in the data test directory, for speed."""

@@ -1,12 +1,13 @@
 """ pygolfdata - weather module
 
-Provides an interface to update and maintain a pandas DataFrame containing hourly weather data.
+Provides an interface to update and maintain a pandas DataFrame containing
+hourly weather data.
 
 Classes:
     WeatherDateApi
-        Class that leverages the DarkSky API to extract hourly weather data per day. Manages a
-        pandas DataFrame and also writes the DataFrame out to CSV to preserve already gathered
-        weather data.
+        Class that leverages the DarkSky API to extract hourly weather data
+        per day. Manages a pandas DataFrame and also writes the DataFrame out
+        to CSV to preserve already gathered weather data.
 """
 import os
 
@@ -16,23 +17,35 @@ import pandas as pd
 
 class WeatherDateApi:
     """
-    Class to create and manage a DataFrame of weather characteristics. Leverages the DarkSky API
-    to retrieve historical weather data.
+    Class to create and manage a DataFrame of weather characteristics.
+    Leverages the DarkSky API to retrieve historical weather data.
 
     Attributes:
         COLUMNS (list of strings): List of headers for the weather DataFrame
     """
-    COLUMNS = ['Date', 'Hour', 'Latitude', 'Longitude', 'Summary', 'DegreesFahrenheit', 'Humidity',
-               'Visibility', 'WindBearing', 'WindGust', 'WindSpeed', "PrecipitationIntensity",
-               "PrecipitationType"]
+    COLUMNS = [
+        'Date',
+        'Hour',
+        'Latitude',
+        'Longitude',
+        'Summary',
+        'DegreesFahrenheit',
+        'Humidity',
+        'Visibility',
+        'WindBearing',
+        'WindGust',
+        'WindSpeed',
+        "PrecipitationIntensity",
+        "PrecipitationType"]
 
     def __init__(self, api_key, weather_history_file_path):
-        """ Initializes a WeatherDateApi object set to a given API key and output file path. If the
-        output file path already exists, the data will attempt to be read into the DataFrame.
-        Raises a ValueError if the directory to the specified file path doesn't exist.
+        """ Initializes a WeatherDateApi object set to a given API key and
+        output file path. If the output file path already exists, the data
+        will attempt to be read into the DataFrame. Raises a ValueError if the
+        directory to the specified file path doesn't exist.
 
         :param api_key: String representing a DarkSkyAPI key
-        :param weather_history_file_path: Local path to output the weather csv to
+        :param weather_history_file_path: Local path to output the weather csv
         """
         self.__api_key = api_key
         if os.path.isdir(weather_history_file_path):
@@ -74,7 +87,12 @@ class WeatherDateApi:
         """Writes the current DataFrame out to disk"""
         self.__df.to_csv(self.__file_path, index=False)
 
-    def append_weather_data(self, latitude, longitude, app_date, write_new_csv=False):
+    def append_weather_data(
+            self,
+            latitude,
+            longitude,
+            app_date,
+            write_new_csv=False):
         """Function to append new weather data to the weather DataFrame.
 
         :param latitude: Floating point value representing latitude
@@ -95,12 +113,19 @@ class WeatherDateApi:
             print("Ignoring request, data already exists")
         else:
             date_string = \
-                self.__generate_api_date_string(app_date.year, app_date.month, app_date.day)
+                self.__generate_api_date_string(
+                    app_date.year,
+                    app_date.month,
+                    app_date.day)
 
             # Retrieve data from DarkSky API
-            response = self.__get_weather_json_darksky(latitude, longitude, date_string)
+            response = self.__get_weather_json_darksky(
+                latitude,
+                longitude,
+                date_string)
             daylight_savings_time_shift = \
-                self.__get_daylight_savings_time_shift(len(response['hourly']['data']))
+                self.__get_daylight_savings_time_shift(
+                    len(response['hourly']['data']))
 
             # Iterate through response and append to DataFrame
             for hour in range(0, len(response['hourly']['data'])):
@@ -109,11 +134,12 @@ class WeatherDateApi:
                     else hour + daylight_savings_time_shift
                 self.__df = \
                     self.__df.append(
-                        self.__get_weather_series_from_response(app_date.strftime('%Y-%m-%d'),
-                                                                hour_of_day,
-                                                                latitude,
-                                                                longitude,
-                                                                response['hourly']['data'][hour]),
+                        self.__get_weather_series_from_response(
+                            app_date.strftime('%Y-%m-%d'),
+                            hour_of_day,
+                            latitude,
+                            longitude,
+                            response['hourly']['data'][hour]),
                         ignore_index=True)
 
             # If write_new_csv is True, write out the updated DF
@@ -121,14 +147,14 @@ class WeatherDateApi:
                 self.__df.to_csv(self.__file_path, index=False)
 
     def __create_new_dataframe(self):
-        """Initializes a new and empty DataFrame with the columns set to the WeatherDateAPIs list
-        of columns."""
+        """Initializes a new and empty DataFrame with the columns set to the
+        WeatherDateAPIs list of columns."""
         df = pd.DataFrame(columns=self.COLUMNS)
         return df
 
     def __get_weather_json_darksky(self, latitude, longitude, date_string):
-        """Calls the DarkSky API with the given latitude, longitude and epoch time to retrieve
-        historical weather data.
+        """Calls the DarkSky API with the given latitude, longitude and epoch
+        time to retrieve historical weather data.
 
         :param latitude: Float value representing latitude
         :param longitude: Float value representing longitude
@@ -139,8 +165,15 @@ class WeatherDateApi:
         return response
 
     # pylint: disable-msg=too-many-arguments
-    def __get_weather_series_from_response(self, local_date, hour, latitude, longitude, response):
-        """Formats an hourly set of data points from a response from the DarkSkyAPI into a pandas
+    def __get_weather_series_from_response(
+            self,
+            local_date,
+            hour,
+            latitude,
+            longitude,
+            response):
+        """Formats an hourly set of data points from a response from the
+        DarkSkyAPI into a pandas
         Series.
 
         :param local_date: Date string. Expected format 'YYYY-MM-DD'
@@ -150,28 +183,32 @@ class WeatherDateApi:
         :param response: DarkSkyAPI hourly data block object
         :return: pandas Series object to be appended to the DataFrame
         """
-        response_keys = response.keys()
-
-        row_data = [local_date,
-                    hour,
-                    latitude,
-                    longitude,
-                    response['summary'] if 'summary' in response_keys else None,
-                    response['temperature'] if 'temperature' in response_keys else None,
-                    response['humidity'] if 'humidity' in response_keys else None,
-                    response['visibility'] if 'visibility' in response_keys else None,
-                    response['windBearing'] if 'windBearing' in response_keys else None,
-                    response['windGust'] if 'windGust' in response_keys else None,
-                    response['windSpeed'] if 'windSpeed' in response_keys else None,
-                    response['precipIntensity'] if 'precipIntensity' in response_keys else None,
-                    response['precipType'] if 'precipType' in response_keys else None]
+        row_data = [
+            local_date,
+            hour,
+            latitude,
+            longitude,
+            self.__return_column_value('summary', response),
+            self.__return_column_value('temperature', response),
+            self.__return_column_value('humidity', response),
+            self.__return_column_value('visibility', response),
+            self.__return_column_value('windBearing', response),
+            self.__return_column_value('windGust', response),
+            self.__return_column_value('windSpeed', response),
+            self.__return_column_value('precipIntensity', response),
+            self.__return_column_value('precipType', response)]
         row = pd.Series(row_data, index=self.COLUMNS)
         return row
 
     @staticmethod
+    def __return_column_value(key_name, response):
+        response_keys = response.keys()
+        return response[key_name] if key_name in response_keys else None
+
+    @staticmethod
     def __generate_api_date_string(year, month, day):
-        """Creates a date string that matches the DarkSkyAPI's expected format from the passed in
-        year, month and day.
+        """Creates a date string that matches the DarkSkyAPI's expected format
+        from the passed in year, month and day.
 
         :param year: Integer for the year
         :param month: Integer representation of the month of the year
@@ -184,8 +221,8 @@ class WeatherDateApi:
 
     @staticmethod
     def __get_daylight_savings_time_shift(length):
-        """Returns an hour shift value to accommodate the timezone change that occurs during
-        daylight savings time.
+        """Returns an hour shift value to accommodate the timezone change that
+        occurs during daylight savings time.
 
         :param length: Length of DarkSky API hourly data object
         :return: Return integer value indicating daylight savings time shift

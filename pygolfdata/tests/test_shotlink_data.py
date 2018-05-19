@@ -8,7 +8,8 @@ from datetime import datetime
 import pandas as pd
 import numpy as np
 
-from data import shotlink
+# pylint isn't seeing the shotlink module here, while these tests run fine, so it's a false pos
+from data import shotlink # pylint: disable=no-name-in-module
 
 # DATA_PATH points to the full data, TEST_DATA_PATH to files w/ the same
 # name but with a fraction of the rows, so tests run faster - as of this writing
@@ -19,7 +20,7 @@ TEST_DATA_PATH = '../data/test'
 # These tests have descriptive method names and also aren't meant to be called (except by a
 # test framework), and so don't ALSO need method docstrings; I'm turning off the warning for this
 # file (only).
-# pylint: disable=missing-docstring
+#  disable=missing-docstring
 
 class ShotTests(unittest.TestCase):
     """Tests for shot data, using the data subsets in the data test directory, for speed."""
@@ -34,7 +35,6 @@ class ShotTests(unittest.TestCase):
     def test_get_shots_updates_field_names(self):
         df = shotlink.get_shots([2017], TEST_DATA_PATH)
         self.assertListEqual(list(shotlink.SHOT_DTYPES.keys()), df.columns.values.tolist())
-        #self.assertListEqual(shotlink.shot_fields, df.columns.values.tolist())
 
     def test_get_shots_has_explicit_data_types(self):
         df = shotlink.get_shots([2017], TEST_DATA_PATH)

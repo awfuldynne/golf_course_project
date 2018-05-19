@@ -48,7 +48,9 @@ class WeatherDateApi:
         :param weather_history_file_path: Local path to output the weather csv
         """
         self.__api_key = api_key
-        if os.path.isdir(weather_history_file_path):
+        path_directory = os.path.dirname(weather_history_file_path)
+
+        if os.path.isdir(path_directory):
             self.__file_path = weather_history_file_path
         else:
             raise ValueError("Directory of given file_path doesn't exist!")

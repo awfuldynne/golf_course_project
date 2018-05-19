@@ -20,7 +20,7 @@ TEST_DATA_PATH = '../data/test'
 # These tests have descriptive method names and also aren't meant to be called (except by a
 # test framework), and so don't ALSO need method docstrings; I'm turning off the warning for this
 # file (only).
-# pylint: disable=missing-docstring
+#  disable=missing-docstring
 
 class ShotTests(unittest.TestCase):
     """Tests for shot data, using the data subsets in the data test directory, for speed."""

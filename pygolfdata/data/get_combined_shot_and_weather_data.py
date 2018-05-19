@@ -19,11 +19,11 @@ def main():
     """Combined data and copy/zip output."""
     data_path = '../data'
 
-    START_YEAR = 2012
-    END_YEAR = 2016
-    years = range(START_YEAR, END_YEAR + 1)
+    start_year = 2012
+    end_year = 2016
+    years = range(start_year, end_year + 1)
 
-    print(f'Started at {datetime.now()}, for years {START_YEAR} to {END_YEAR}.')
+    print(f'Started at {datetime.now()}, for years {start_year} to {end_year}.')
 
     weather = pd.read_csv(f'{data_path}/pga_tour_weather_data.csv')
     print(f'Loaded weather data with {len(weather)} rows and {len(weather.columns)} columns.')
@@ -46,13 +46,13 @@ def main():
                              direction='nearest')
     combined['TimeDifference'] = combined['ShotDateAndTime'] - combined['WeatherDateAndHour']
 
-    csv_filename = f'combined_shots_and_weather_{START_YEAR}_{END_YEAR}.csv'
+    csv_filename = f'combined_shots_and_weather_{start_year}_{end_year}.csv'
     print(f'Writing {len(combined)} rows with {len(combined.columns)} cols, to {csv_filename}...')
     combined.to_csv(csv_filename, index=False)
 
     # TODO this may need to change now that we've moved to a submodule for the data
     print('Zipping...')
-    zip_filename = f'combined{START_YEAR}to{END_YEAR}.zip'
+    zip_filename = f'combined{start_year}to{end_year}.zip'
     with zipfile.ZipFile(zip_filename, 'w', zipfile.ZIP_DEFLATED) as zip_ref:
         zip_ref.write(csv_filename)
 

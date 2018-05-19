@@ -1,3 +1,8 @@
+"""
+Code to load and process PGA ShotLink data. See method documentation and tests for more information
+about the capabilities and operation of this code.
+"""
+
 import collections
 from datetime import datetime
 
@@ -6,7 +11,7 @@ import numpy as np
 
 DATA_PATH = '../data'
 
-shot_dtypes = collections.OrderedDict({
+SHOT_DTYPES = collections.OrderedDict({
     'TourCode': 'category',
     'TourDescription': 'category',
     'Year': np.uint16,
@@ -49,11 +54,11 @@ shot_dtypes = collections.OrderedDict({
     'LeftRight': 'category',
     'StrokesGainedBaseline': np.float32,
     'StrokesGainedCategory': 'category',
-    'RecoveryShot': 'category' })
+    'RecoveryShot': 'category'})
 
 # size of the source dataframe is much less than shots, but I'll set dtypes explicitly
 # since we'll be pulling this data into a joined dataframe
-courselevel_dtypes = collections.OrderedDict({
+COURSELEVEL_DTYPES = collections.OrderedDict({
     'Year': np.uint16,
     'CourseNum': np.uint16,
     'CourseName': 'category',
@@ -94,9 +99,9 @@ courselevel_dtypes = collections.OrderedDict({
 # from above and then add the weather columns; the datetime cols aren't defined
 # here - these stay object and then are converted to datetime during parsing,
 # likely on the read_csv call (but could be w/ something like to_datetime)
-combined_dtypes = shot_dtypes.copy()
-combined_dtypes.update(courselevel_dtypes)
-combined_dtypes.update({
+COMBINED_DTYPES = SHOT_DTYPES.copy()
+COMBINED_DTYPES.update(COURSELEVEL_DTYPES)
+COMBINED_DTYPES.update({
     'PlayerName': 'category',
     'Hour': np.uint8,
     'Latitude': np.float32,
@@ -110,7 +115,7 @@ combined_dtypes.update({
     'WindSpeed': np.float32,
     'PrecipitationIntensity': np.float32,
     'PrecipitationType': 'category',
-    'CourseName_weather': 'category' })
+    'CourseName_weather': 'category'})
 
 combined_date_cols = ['Date_shots', 'Date_weather', 'ShotDateAndTime', 'WeatherDateAndHour']
 
@@ -133,8 +138,8 @@ def get_shots(years, data_path):
     """
     # need na_values as below because 'Hole Score' has double spaced empty values
     return get_years('Shot', data_path, years,
-                     header=0, names=shot_dtypes.keys(),
-                     dtype=shot_dtypes,
+                     header=0, names=SHOT_DTYPES.keys(),
+                     dtype=SHOT_DTYPES,
                      na_values='  ')
 
 def get_shots_augmented(years, data_path):
@@ -157,7 +162,7 @@ def get_shots_augmented(years, data_path):
     # I think CourseNum captures the tournament, for courses that have multiple tournaments
     # (per the shot detail field def doc, 'courses played in more than one event will receive
     #  a number for each event), so we don't need to join on something tournament-related
-    df=pd.merge(shots, courselevels[courselevels_cols_to_keep],
+    df = pd.merge(shots, courselevels[courselevels_cols_to_keep],
                 how='left', on=['Year', 'CourseNum', 'Round', 'Hole'])
     return df
 
@@ -181,7 +186,7 @@ def get_active_course_dates(years, data_path):
     # object directly require handling the fact that its keys are unordered and so also
     # a few lines of code
     grouped = shots.groupby(['CourseName', 'Date'], as_index=True).size()
-    return pd.DataFrame(grouped).reset_index(level=[0,1])[['CourseName', 'Date']]
+    return pd.DataFrame(grouped).reset_index(level=[0, 1])[['CourseName', 'Date']]
 
 def prepare_shots(df):
     """
@@ -205,7 +210,8 @@ def prepare_shots(df):
            (df['Hole'] == 1) & (df['Shot'] == 1), 'Date'] = datetime(2011, 3, 3)
 
     df['ShotDateAndTime'] = pd.to_datetime(df['Date'].astype(str) + ' ' +
-                                           df['Time'].astype(str).str.zfill(4), format='%Y-%m-%d %H%M')
+                                           df['Time'].astype(str).str.zfill(4),
+                                           format='%Y-%m-%d %H%M')
 
     df['PlayerName'] = df.apply(lambda r: r['PlayerFirstName'] + ' ' + r['PlayerLastName'], axis=1)
 
@@ -213,15 +219,16 @@ def prepare_shots(df):
 
 def get_combined_data_from_file(filename):
     """Load combined shot and weather data from the specified file."""
-    return pd.read_csv(filename, dtype=combined_dtypes, parse_dates=combined_date_cols, infer_datetime_format=True)
+    return pd.read_csv(filename, dtype=COMBINED_DTYPES,
+                       parse_dates=combined_date_cols, infer_datetime_format=True)
 
 def get_courselevels(years, data_path):
     """
     Loads course level data.
 
-    Course level data has a bunch of data that could correlate with performance (fairway width, firmness,
-    grass height, stimpmeter, as well as recorded wind data that we might be able to use in comparison
-    to the wind data we get separately.
+    Course level data has a bunch of data that could correlate with performance (fairway width,
+    firmness, grass height, stimpmeter, as well as recorded wind data that we might be able to use
+    in comparison to the wind data we get separately.
 
     :param years: a sequence of integer year values for which data is desired; for
                   example [2017], or [2015, 2016], etc.
@@ -230,21 +237,23 @@ def get_courselevels(years, data_path):
     :return: a DataFrame containing a row per course level, for the specified year(s).
     """
     return get_years('CourseLevel', data_path, years,
-                     header=0, names=courselevel_dtypes.keys(), dtype=courselevel_dtypes)
+                     header=0, names=COURSELEVEL_DTYPES.keys(), dtype=COURSELEVEL_DTYPES)
 
 
-def get_specific_shot(df, last_name, first_name, year, tournament, course, round, hole, shot):
+def get_specific_shot(df, last_name, first_name, year, tournament, course, round_in_event, hole, shot):
     """Convenience method to get a single row/shot. df is a dataframe with shot data."""
     shot = df[(df['PlayerLastName'] == last_name) &
               (df['PlayerFirstName'] == first_name) &
               (df['Year'] == year) &
               (df['TournamentName'] == tournament) &
               (df['CourseName'] == course) &
-              (df['Round'] == round) &
+              (df['Round'] == round_in_event) &
               (df['Hole'] == hole) &
               (df['Shot'] == shot)]
 
-    if len(shot) == 0:
+    # len-as-condition wants us to use 'if not len', which doesn't work for DataFrame instances,
+    # because 'The truth value of a DataFrame is ambiguous' - instead we'll be explicit
+    if len(shot) == 0: # pylint: disable=len-as-condition
         raise ValueError("No shot found.")
     elif len(shot) > 1:
         raise ValueError("Multiple shots found.")

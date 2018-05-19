@@ -117,7 +117,7 @@ COMBINED_DTYPES.update({
     'PrecipitationType': 'category',
     'CourseName_weather': 'category'})
 
-combined_date_cols = ['Date_shots', 'Date_weather', 'ShotDateAndTime', 'WeatherDateAndHour']
+COMBINED_DATE_COLS = ['Date_shots', 'Date_weather', 'ShotDateAndTime', 'WeatherDateAndHour']
 
 
 def get_years(type_prefix, data_path, years, **kwargs):
@@ -163,7 +163,7 @@ def get_shots_augmented(years, data_path):
     # (per the shot detail field def doc, 'courses played in more than one event will receive
     #  a number for each event), so we don't need to join on something tournament-related
     df = pd.merge(shots, courselevels[courselevels_cols_to_keep],
-                how='left', on=['Year', 'CourseNum', 'Round', 'Hole'])
+                  how='left', on=['Year', 'CourseNum', 'Round', 'Hole'])
     return df
 
 def get_active_course_dates(years, data_path):
@@ -220,7 +220,7 @@ def prepare_shots(df):
 def get_combined_data_from_file(filename):
     """Load combined shot and weather data from the specified file."""
     return pd.read_csv(filename, dtype=COMBINED_DTYPES,
-                       parse_dates=combined_date_cols, infer_datetime_format=True)
+                       parse_dates=COMBINED_DATE_COLS, infer_datetime_format=True)
 
 def get_courselevels(years, data_path):
     """
@@ -240,14 +240,19 @@ def get_courselevels(years, data_path):
                      header=0, names=COURSELEVEL_DTYPES.keys(), dtype=COURSELEVEL_DTYPES)
 
 
-def get_specific_shot(df, last_name, first_name, year, tournament, course, round_in_event, hole, shot):
-    """Convenience method to get a single row/shot. df is a dataframe with shot data."""
+def get_specific_shot(df, last_name, first_name, year, tournament, course, event_round, hole, shot): # pylint: disable=too-many-arguments, line-too-long
+    """
+    Convenience method to get a single row/shot. df is a dataframe with shot data. We could update
+    to take a dict and get the number of args below the ideal limit, but for now that makes calling
+    code more complex and since this is an internal method currently only used to make it easier
+    to write tests, I'm not going to do this right now.
+    """
     shot = df[(df['PlayerLastName'] == last_name) &
               (df['PlayerFirstName'] == first_name) &
               (df['Year'] == year) &
               (df['TournamentName'] == tournament) &
               (df['CourseName'] == course) &
-              (df['Round'] == round_in_event) &
+              (df['Round'] == event_round) &
               (df['Hole'] == hole) &
               (df['Shot'] == shot)]
 

@@ -1,6 +1,6 @@
 [BASIC]
-# accept longer method names (default is 30)
-method-rgx=[a-z_][a-z0-9_]{1,60}$
+# accept longer method names, used in things like tests (default is 30)
+method-rgx=[a-z_][a-z0-9_]{1,70}$
 
 # and shorter variable and argument names, for things like 'df'
 variable-rgx=[a-z_][a-z0-9_]{1,30}$

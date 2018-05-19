@@ -50,7 +50,6 @@ def main():
     print(f'Writing {len(combined)} rows with {len(combined.columns)} cols, to {csv_filename}...')
     combined.to_csv(csv_filename, index=False)
 
-    # TODO this may need to change now that we've moved to a submodule for the data
     print('Zipping...')
     zip_filename = f'combined{start_year}to{end_year}.zip'
     with zipfile.ZipFile(zip_filename, 'w', zipfile.ZIP_DEFLATED) as zip_ref:

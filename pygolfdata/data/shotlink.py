@@ -117,7 +117,7 @@ COMBINED_DTYPES.update({
     'PrecipitationType': 'category',
     'CourseName_weather': 'category'})
 
-combined_date_cols = ['Date_shots', 'Date_weather', 'ShotDateAndTime', 'WeatherDateAndHour']
+COMBINED_DATE_COLS = ['Date_shots', 'Date_weather', 'ShotDateAndTime', 'WeatherDateAndHour']
 
 
 def get_years(type_prefix, data_path, years, **kwargs):
@@ -220,7 +220,7 @@ def prepare_shots(df):
 def get_combined_data_from_file(filename):
     """Load combined shot and weather data from the specified file."""
     return pd.read_csv(filename, dtype=COMBINED_DTYPES,
-                       parse_dates=combined_date_cols, infer_datetime_format=True)
+                       parse_dates=COMBINED_DATE_COLS, infer_datetime_format=True)
 
 def get_courselevels(years, data_path):
     """

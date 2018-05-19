@@ -1,3 +1,7 @@
+"""
+Tests - both unit and integration - for the code in shotlink.py, which loads and prepares
+PGA ShotLink data.
+"""
 import unittest
 from datetime import datetime
 
@@ -11,6 +15,11 @@ from data import shotlink
 # the content is the first 1000 rows of the full data
 DATA_PATH = '../data'
 TEST_DATA_PATH = '../data/test'
+
+# These tests have descriptive method names and also aren't meant to be called (except by a
+# test framework), and so don't ALSO need method docstrings; I'm turning off the warning for this
+# file (only).
+# pylint: disable=missing-docstring
 
 class ShotTests(unittest.TestCase):
     """Tests for shot data, using the data subsets in the data test directory, for speed."""
@@ -141,7 +150,7 @@ class ShotTestsIntegration(unittest.TestCase):
         self.assertEqual(183, len(df))
         self.assertEqual(48, len(df['CourseName'].unique()))
 
-    def test_prepare_data_fixes_Fred_Funk_bad_date(self):
+    def test_prepare_data_fixes_fred_funk_bad_date(self):
         # the 2011 data has one row with a 12/30/1899 date that should be 3/3/2011
         df = shotlink.get_shots([2011], DATA_PATH)
         df = shotlink.prepare_shots(df)

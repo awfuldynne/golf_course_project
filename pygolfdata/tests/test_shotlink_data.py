@@ -20,7 +20,7 @@ TEST_DATA_PATH = '../data/test'
 # These tests have descriptive method names and also aren't meant to be called (except by a
 # test framework), and so don't ALSO need method docstrings; I'm turning off the warning for this
 # file (only).
-#  disable=missing-docstring
+# pylint: disable=missing-docstring
 
 class ShotTests(unittest.TestCase):
     """Tests for shot data, using the data subsets in the data test directory, for speed."""
@@ -184,4 +184,3 @@ class CourseLevelIntegrationTests(unittest.TestCase):
     def test_get_courselevels_has_2017_actual_data(self):
         df = shotlink.get_courselevels([2017], DATA_PATH)
         self.assertEqual(3438, len(df))
-

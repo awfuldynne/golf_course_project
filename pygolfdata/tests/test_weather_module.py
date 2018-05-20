@@ -14,7 +14,8 @@ import random
 import string
 import unittest
 
-from weather import core
+# pylint isn't seeing the weatjer module here, while these tests run fine
+from weather import core # pylint: disable=import-error
 
 
 class WeatherDateApiTest(unittest.TestCase):
@@ -83,20 +84,7 @@ class WeatherDateApiTest(unittest.TestCase):
     def test_column_names(self):
         """ Tests that all expected columns exist in the DataFrame
         """
-        columns = [
-            'Date',
-            'Hour',
-            'Latitude',
-            'Longitude',
-            'Summary',
-            'DegreesFahrenheit',
-            'Humidity',
-            'Visibility',
-            'WindBearing',
-            'WindGust',
-            'WindSpeed',
-            "PrecipitationIntensity",
-            "PrecipitationType"]
+        columns = self.wda.COLUMNS
 
         for column in columns:
             self.assertTrue(column in self.df.columns)

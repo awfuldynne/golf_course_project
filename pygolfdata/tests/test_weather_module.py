@@ -16,7 +16,7 @@ import string
 import unittest
 
 # pylint isn't seeing the weatjer module here, while these tests run fine
-from weather import core # pylint: disable=no-name-in-module
+from weather import core  # pylint: disable=no-name-in-module
 
 
 class WeatherDateApiTest(unittest.TestCase):
@@ -50,7 +50,7 @@ class WeatherDateApiTest(unittest.TestCase):
     def test_get_api_key(self):
         """ Tests the API key get method
         """
-        self.assertEqual("TEST", self.wda.get_api_key())
+        self.assertEqual(os.environ["darksky_api_key"], self.wda.get_api_key())
 
     def test_set_api_key(self):
         """ Tests the API key set method

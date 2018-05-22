@@ -44,25 +44,24 @@ def run():
         tour_dates_df.merge(course_location, on='CourseName', how='left')
 
     # Create WeatherDateAPI object
-    w = \
+    wda = \
         core.WeatherDateApi(
             '53adfd0c8369b455fddb5f87955a1e0c',
             os.path.join(LOCAL_DATA_FOLDER, 'weather_data_05212018.csv'))
 
     # For each row in the course_date_geoloc_df, generate weather data
-    for row in course_date_geoloc_df.head(5).itertuples():
-        print(row)
+    for row in course_date_geoloc_df.itertuples():
         date_split = [int(x) for x in str(row.Date).split('-')]
-        w.append_weather_data(
+        wda.append_weather_data(
             row.Latitude,
             row.Longitude,
             date(date_split[0], date_split[1], date_split[2]))
 
     # Write out the weather data to a csv file
-    w.write_dataframe_to_file()
+    wda.write_dataframe_to_file()
 
     # Retrieve the weather DataFrame
-    weather_data = w.get_weather_dataframe()
+    weather_data = wda.get_weather_dataframe()
 
     # From the course_date_geoloc_df, limit the number of columns
     course_date_geoloc_subset_df = \

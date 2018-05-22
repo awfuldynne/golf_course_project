@@ -16,7 +16,7 @@ import string
 import unittest
 
 # pylint isn't seeing the weatjer module here, while these tests run fine
-from weather import core  # pylint: disable=no-name-in-module
+from weather import core  # pylint: disable=import-error
 
 
 class WeatherDateApiTest(unittest.TestCase):

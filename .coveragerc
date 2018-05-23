@@ -2,7 +2,7 @@
 omit =
 #    */travis/*
     *__init__*
-    home/travis/virtualenv/python3.6.3/lib/python3.6/*
+    /home/travis/virtualenv/python3.6.3/lib/python3.6/*
 
 #[report]
 #omit =  

@@ -1,6 +1,10 @@
+[run]
+omit =
+    */travis/*
+
 [report]
 omit =  
-    /home/*
+    */travis/*
     */python?.?/*
     */site-packages/nose/*
     *__init__*

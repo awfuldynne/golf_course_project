@@ -9,27 +9,30 @@ Classes:
 """
 
 
+from datetime import date
 import os
 import random
 import string
 import unittest
 
 # pylint isn't seeing the weatjer module here, while these tests run fine
-from weather import core # pylint: disable=import-error
+from weather import core  # pylint: disable=import-error
 
 
 class WeatherDateApiTest(unittest.TestCase):
     """ Class of unit tests for the WeatherDateApi's core functionality
     """
-    existing_valid_file_path = "weather/test_data/weather_date_api_test.csv"
+    existing_valid_file_path = "pygolfdata/weather/test_data/weather_date_api_test.csv"
     non_existing_valid_file_path = \
-        "weather/test_data/weather_date_api_test2.csv"
+        "pygolfdata/weather/test_data/weather_date_api_test2.csv"
     invalid_file_path = \
-        "weather/test_data/BAD_DIRECTORY/weather_date_api_test.csv"
+        "pygolfdata/weather/test_data/BAD_DIRECTORY/weather_date_api_test.csv"
 
     def setUp(self):
         self.wda = \
-            core.WeatherDateApi("TEST", self.existing_valid_file_path)
+            core.WeatherDateApi(
+                os.environ["darksky_api_key"],
+                self.existing_valid_file_path)
         self.wda2 = \
             core.WeatherDateApi("TEST", self.non_existing_valid_file_path)
         self.df = self.wda.get_weather_dataframe()
@@ -47,7 +50,7 @@ class WeatherDateApiTest(unittest.TestCase):
     def test_get_api_key(self):
         """ Tests the API key get method
         """
-        self.assertEqual("TEST", self.wda.get_api_key())
+        self.assertEqual(os.environ["darksky_api_key"], self.wda.get_api_key())
 
     def test_set_api_key(self):
         """ Tests the API key set method
@@ -96,6 +99,16 @@ class WeatherDateApiTest(unittest.TestCase):
         columns = 13
         self.assertEqual(rows, self.df.shape[0])
         self.assertEqual(columns, self.df.shape[1])
+
+    def test_darksky_api_call(self):
+        """ Tests that a call to the DarkSky API appends the expected amount
+        of data"""
+        self.wda.append_weather_data(21.0068, -156.64, date(2012, 1, 6))
+        df = self.wda.get_weather_dataframe()
+        rows = 97
+        columns = 13
+        self.assertEqual(rows, df.shape[0])
+        self.assertEqual(columns, df.shape[1])
 
     def test_dataframe_write_to_disk(self):
         """ Tests that the write DataFrame method writes a file to disk

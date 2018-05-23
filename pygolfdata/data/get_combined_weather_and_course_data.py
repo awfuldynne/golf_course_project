@@ -13,18 +13,16 @@ import pandas as pd
 
 from weather import core  # pylint: disable=import-error
 
-LOCAL_DATA_FOLDER = '../../../golf_course_project_data'
+LOCAL_DATA_FOLDER = '../../data'
 ACTIVE_COURSE_DATE_FILE_NAME = 'active_course_dates.csv'
 COURSES_GEOCODE_FILE_NAME = 'courses_geocoded.txt'
-FINAL_OUTPUT_FILE_NAME = 'pga_tour_weather_data.csv2'
+FINAL_OUTPUT_FILE_NAME = 'pga_tour_weather_data.csv'
 
 
 def run():
     """Generate combined weather, course data, date data set"""
 
-    # Change from the directory golf_course_project/pygolfdata/data to the
-    # local repository of the golf_course_project_data. In our example,
-    # golf_course_project and golf_course_project_data share the same folder.
+    # Change our working directory to the submodule data directory
     os.chdir(LOCAL_DATA_FOLDER)
 
     # Read in active course dates and course geolocation data

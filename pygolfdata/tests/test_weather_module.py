@@ -22,11 +22,11 @@ from weather import core  # pylint: disable=import-error
 class WeatherDateApiTest(unittest.TestCase):
     """ Class of unit tests for the WeatherDateApi's core functionality
     """
-    existing_valid_file_path = "weather/test_data/weather_date_api_test.csv"
+    existing_valid_file_path = "pygolfdata/weather/test_data/weather_date_api_test.csv"
     non_existing_valid_file_path = \
-        "weather/test_data/weather_date_api_test2.csv"
+        "pygolfdata/weather/test_data/weather_date_api_test2.csv"
     invalid_file_path = \
-        "weather/test_data/BAD_DIRECTORY/weather_date_api_test.csv"
+        "pygolfdata/weather/test_data/BAD_DIRECTORY/weather_date_api_test.csv"
 
     def setUp(self):
         self.wda = \

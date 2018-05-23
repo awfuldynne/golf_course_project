@@ -1,7 +1,8 @@
-#[run]
-#omit =
+[run]
+omit =
 #    */travis/*
-#    *__init__*
+    *__init__*
+    home/travis/virtualenv/python3.6.3/lib/python3.6/*
 
 #[report]
 #omit =  

@@ -14,8 +14,8 @@ from data import shotlink # pylint: disable=no-name-in-module
 # DATA_PATH points to the full data, TEST_DATA_PATH to files w/ the same
 # name but with a fraction of the rows, so tests run faster - as of this writing
 # the content is the first 1000 rows of the full data
-DATA_PATH = '../data'
-TEST_DATA_PATH = '../data/test'
+DATA_PATH = 'data'
+TEST_DATA_PATH = 'data/test'
 
 # These tests have descriptive method names and also aren't meant to be called (except by a
 # test framework), and so don't ALSO need method docstrings; I'm turning off the warning for this

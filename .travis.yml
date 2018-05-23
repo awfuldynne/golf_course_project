@@ -49,7 +49,7 @@ before_script:
 # the actual commands to run
 script:
 #    - pushd pygolfdata  # is this the 'right' way to get to the dir we want?
-    - coverage run -m unittest discover -s pygolfdata
+    - coverage run -m unittest discover -s pygolfdata/ -p "test_we*.py"
 #    - popd
 
 # generate a coverage report to send to back to user

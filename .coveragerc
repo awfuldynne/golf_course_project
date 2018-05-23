@@ -1,12 +1,13 @@
 [run]
 omit =
     */travis/*
-
-[report]
-omit =  
-    */travis/*
-    */python?.?/*
-    */site-packages/nose/*
     *__init__*
-exclude_lines =
-    if __name__ == .__main__.:
+
+#[report]
+#omit =  
+#    */travis/*
+#    */python?.?/*
+#    */site-packages/nose/*
+#    *__init__*
+#exclude_lines =
+#    if __name__ == .__main__.:

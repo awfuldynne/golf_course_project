@@ -218,11 +218,21 @@ def prepare_shots(df):
     return df
 
 def get_combined_data_from_file(filename):
-    """Load combined shot and weather data from the specified file."""
+    """
+    Load combined shot and weather data from the specified file. Use this function instead
+    of calling read_csv directly to get the benefit of explicit datatypes and so much smaller
+    in-memory size, automatic conversion of datetime data, and an improved representation for
+    a field like PrecipitationType.
+    """
     df = pd.read_csv(filename, dtype=COMBINED_DTYPES,
-                       parse_dates=COMBINED_DATE_COLS, infer_datetime_format=True)
+                     parse_dates=COMBINED_DATE_COLS, infer_datetime_format=True)
+
+    # this modifies/prepares weather data for easier analysis; possibly we should do this upstream
+    # of this call so that people that use the data from the file directly - w/o using this
+    # function - get the benefit of the update; it's arguable though, so fine to leave here
     df['PrecipitationType'] = df['PrecipitationType'].cat.add_categories(['None'])
-    df['PrecipitationType'].fillna('None', inplace = True)
+    df['PrecipitationType'].fillna('None', inplace=True)
+
     return df
 
 def get_courselevels(years, data_path):

@@ -273,7 +273,10 @@ def get_specific_shot(df, last_name, first_name, year, tournament, course, event
     # because 'The truth value of a DataFrame is ambiguous' - instead we'll be explicit
     if len(shot) == 0: # pylint: disable=len-as-condition
         raise ValueError("No shot found.")
-    elif len(shot) > 1:
+    # excluding the > 1 clause from coverage since it's only here in case the data we get from
+    # the PGA Tour has multiple rows for the same shot; I can't test it w/o setting up something
+    # like a mocking framework, and that's overkill
+    elif len(shot) > 1: # pragma: no cover
         raise ValueError("Multiple shots found.")
     else:
         return shot.iloc[0]

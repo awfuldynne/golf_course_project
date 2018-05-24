@@ -122,6 +122,11 @@ class ShotTests(unittest.TestCase):
         self.assertEqual('category', str(df['PlayerName'].dtype))
         self.assertEqual('uint8', str(df['Shot'].dtype))
 
+    def test_get_specific_shot_raises_exception_for_no_shot(self):
+        df = shotlink.get_shots([2017], DATA_PATH)
+        self.assertRaises(ValueError, shotlink.get_specific_shot, df, 'foo', 'bar', 2017,
+                          'foo', 'bar', 1, 1, 1)
+
 
 class ShotTestsIntegration(unittest.TestCase):
     """Tests for shot data, that take longer, including tests with actual data."""

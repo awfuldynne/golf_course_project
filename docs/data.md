@@ -2,12 +2,13 @@
 
 This document outlines the data retrieved and used for this project, and explains how the data is stored and accessed by the code.
 
+TODO add links to particular files/directories.
+
 ## Data repository
 
 - TODO cover that we have a separate repo, why, and how the main repo incorporates it as the data dir using submodules, and that we use Git LFS; point to SHotLink dat section for organization (what files, etc.) and to the Travis section for how we get access in the CI VM.
 - TODO also cover that we have two repos, one for general exploration w/ more data and one with a more minimal set that we ended up using for our analysis (to make it quicker/cheaper to get things locally and in the CI VM)
  
-
 ## ShotLink data
 
 [ShotLink](https://www.pgatour.com/stats/shotlinkintelligence/overview.html) contains detailed information about every stroke taken on most PGA Tour events, over many years. It's available for use in academic environments as specified on the ShotLink site. Each of the members of our project team obtained permission to use the data, and we stored the data in a separate and private GitHub repo, as explained in the [#ShotLink data] section above.
@@ -24,13 +25,51 @@ We also evaluated the following datasets and chose not to use them - mainly beca
 - Radar launch.
 - Radar trajectory.
 
+We only need weather data on the days during which a tournament was held. To get this data, the get_course_active_dates.py script calls the shotlink.py get_active_course_dates function. This function returns a DataFrame that has a list of course names and dates, with a row per combination of day and course.
+
+In addition to the data in the root directory, the data repo also has data used by shotlink.py module unit tests, in the test directory. These files are very small subsets of the complete data - so they load quickly, for example - that were generated using the generate_test_files.py or generate_test_files.sh scripts in the root directory of the data repo.
+
 TBD include whatever is specified/required by ShotLink agreement.
 
 ## Weather data
 
-TBD
+The weather data comes from Dark Sky; the data source and the code we use is explained in more detail in [this doc](weather_date_api_doc.md). 
+
+The data/get_combined_weather_and_course_data.py script obtains weather observations for the specific geographic coordinates and dates associated with each tournament. It outputs the results as pga_tour_weather_data.csv, which exists in the root directory of the data repo. For more information about the entire process, see [this section below](#Combination-of-geo-coded-course-location,-weather,-and ShotLink-data)
+
+In addition, the weather code uses test data located in the main repo, at pygolfdata/weather/test_data.
+
+## Course location
+
+To obtain weather observations, we need a the latitude and longitude of each course. The get_course_locations.py script uses Google's geocoding API to find the latitude and longitude and outputs the result as a mapping between course name and latitude/longitude to the file courses_geocoded.txt in the data repo.
+
+## Combination of geo-coded course location, weather, and ShotLink data
+
+Ultimately, we produce a dataset with a row per stroke, where each row includes data about the stroke and data about the weather at the time the stroke was taken. We persist this data in the root directory of the data repo as files like combined2012to2016.zip, which extracts to the file combined_shots_and_weather_2012_2016.csv and holds a row per stroke from 2012 to 2016, inclusive. The shotlink.py module provides a convenience function called get_combined_data_from_file that loads the data from this file and returns a pandas DataFrame, specifying explicit data types to greatly reduce the size of the data in memory.
+
+To get to this data set, we run the following code, all of which is introduced above:
+- get_course_locations.py - The latitude and longitude of each course. Produces courses_geocoded.txt.
+- get_course_active_dates.py - The dates on which a tournament was held, at a given course. We only need weather data for a particular course these particular days. Produces active_course_dates.csv.
+- get_combined_weather_and_course_data.py - Weather observations for each hour of each day on which a tournament was held, at the specified course (i.e., at the latitude and longitude of the course). Produces pga_tour_weather_data.csv.
+- get_combined_shot_and_weather_data.py - Combines stroke data from the shotlink.py get_shots_augmented function and weather data from pga_tour_weather_data.csv to generate the ultimate data sets available for analysis. Produces combined_shots_and_weather_yearfrom_yearto.csv and the corresponding compressed files stored in the data repo.
+
+## Git submodules, Travis CI access to the private data repository
+
+This section explains how we got a Travis CI build working with both a public GitHub repo and a private GitHub repo, using Git submodules and GitHub's and Travis CI's support for deploy keys.
+
+As explained above in the [Data repository](#Data repository) section, we store the PGA Tour ShotLink data in a private GitHub repo, separate from the code that lives in a public repo. We want the code in the public repo to have access to and know where the data lives, and for this to hold whether the code runs on a local machine or on a CI VM. The local machine is
 
 
-## Travis CI access to the private data repository
 
-TBD
+- Travis docs https://docs.travis-ci.com/user/private-dependencies/ 
+- I’m going to try the deploy key approach. I think I need to do stuff for ex here: https://stackoverflow.com/questions/47012913/allow-access-to-private-dependencies-before-install?rq=1. I think the approach here is that we generate a public/private key pair locally. We tell the repo itself - the private repo - of the public side of this key, which we do w/ the web UI on github.com. Then, the Travis VM needs to have the private side of the key. To do this, we encrypt the private side of the key, add it to the parent/not private repo - it’s encrypted, so it can go in the repo (I think it’s encrypted using the completely separate public/private key pair that Travis maintains for each repo, and then in the .travis.yml before_install steps decrypt the file/get the cleartext private key and add it to ssh-agent. Then, when git tries to resolve submodules, it’ll work. (Side benefit of this approach is that I think the Git URL stays the same - it’s the ssh form - and so works when you have the repo locally w/ your own SSH and also works on Travis, w/o having to change)
+- To get a new key, I follow the instrs https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/#platform-mac - just the first part, since I only want the files (no need for ssh-agent on the machine I use to generate the key), no pass phrase. I used ** ssh-keygen -t rsa -b 4096 -C "TravisDeployKey"  ** and then saved to TravisDeployKey, which gave me two files: TravisDeployKey and TravisDeployKey.pub 
+- I can encrypt a file I think perhaps w/ steps at https://docs.travis-ci.com/user/encrypting-files. I ran ** travis encrypt-file TravisDeployKey ** after running travis login. This gave me a TravisDeployKey.enc file and said to use the following to decrypt, as part of the .travis.yml; it also reminds me to add the .enc file to the repo, but not to add the non-encrypted source 
+- **
+	openssl aes-256-cbc -K $encrypted_7eb1121a80e0_key -iv $encrypted_7eb1121a80e0_iv -in TravisDeployKey.enc -out TravisDeployKey -d 
+	**
+
+- install travis gem w/ sudo gem install travis
+- 
+
+openssl aes-256-cbc -K $encrypted_8db6aac11b1c_key -iv $encrypted_8db6aac11b1c_iv -in TravisDeployKey.enc -out ../TravisDeployKey -d

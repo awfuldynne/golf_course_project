@@ -1,3 +1,7 @@
+"""
+Obtains the latitude and longitude for each course, outputting the result to a file called
+courses_geocoded.txt.
+"""
 import pandas as pd
 import requests
 

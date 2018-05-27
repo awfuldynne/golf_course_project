@@ -25,9 +25,9 @@ class WeatherDateApiTest(unittest.TestCase):
     existing_valid_file_path = \
         "pygolfdata/weather/test_data/weather_date_api_test.csv"
     non_existing_valid_file_path = \
-        "weather/test_data/weather_date_api_test2.csv"
+        "pygolfdata/weather/test_data/weather_date_api_test2.csv"
     invalid_file_path = \
-        "weather/test_data/BAD_DIRECTORY/weather_date_api_test.csv"
+        "pygolfdata/weather/test_data/BAD_DIRECTORY/weather_date_api_test.csv"
 
     def setUp(self):
         self.wda = \
@@ -139,3 +139,6 @@ class WeatherDateApiTest(unittest.TestCase):
         self.assertTrue(os.path.isfile(self.non_existing_valid_file_path))
         os.remove(self.non_existing_valid_file_path)
 
+
+if __name__ == '__main__':
+    unittest.main()

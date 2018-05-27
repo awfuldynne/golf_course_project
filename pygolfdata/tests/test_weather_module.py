@@ -86,8 +86,7 @@ class WeatherDateApiTest(unittest.TestCase):
             self.invalid_file_path)
 
     def test_invalid_latitude(self):
-        """ Tests that the file path set method throws a ValueError when given
-        a bad file path
+        """ Tests that the an invalid latitude raises a ValueError
         """
         self.assertRaises(
             ValueError,
@@ -97,8 +96,7 @@ class WeatherDateApiTest(unittest.TestCase):
             date(2012, 1, 6))
 
     def test_invalid_longitude(self):
-        """ Tests that the file path set method throws a ValueError when given
-        a bad file path
+        """ Tests that the an invalid longitude raises a ValueError
         """
         self.assertRaises(
             ValueError,
@@ -140,3 +138,4 @@ class WeatherDateApiTest(unittest.TestCase):
         self.wda2.write_dataframe_to_file()
         self.assertTrue(os.path.isfile(self.non_existing_valid_file_path))
         os.remove(self.non_existing_valid_file_path)
+

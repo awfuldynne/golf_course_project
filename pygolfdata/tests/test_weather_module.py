@@ -22,11 +22,12 @@ from weather import core  # pylint: disable=import-error
 class WeatherDateApiTest(unittest.TestCase):
     """ Class of unit tests for the WeatherDateApi's core functionality
     """
-    existing_valid_file_path = "pygolfdata/weather/test_data/weather_date_api_test.csv"
+    existing_valid_file_path = \
+        "pygolfdata/weather/test_data/weather_date_api_test.csv"
     non_existing_valid_file_path = \
-        "pygolfdata/weather/test_data/weather_date_api_test2.csv"
+        "weather/test_data/weather_date_api_test2.csv"
     invalid_file_path = \
-        "pygolfdata/weather/test_data/BAD_DIRECTORY/weather_date_api_test.csv"
+        "weather/test_data/BAD_DIRECTORY/weather_date_api_test.csv"
 
     def setUp(self):
         self.wda = \
@@ -84,6 +85,28 @@ class WeatherDateApiTest(unittest.TestCase):
             self.wda.set_output_file_path,
             self.invalid_file_path)
 
+    def test_invalid_latitude(self):
+        """ Tests that the file path set method throws a ValueError when given
+        a bad file path
+        """
+        self.assertRaises(
+            ValueError,
+            self.wda.append_weather_data,
+            91,
+            -156.64,
+            date(2012, 1, 6))
+
+    def test_invalid_longitude(self):
+        """ Tests that the file path set method throws a ValueError when given
+        a bad file path
+        """
+        self.assertRaises(
+            ValueError,
+            self.wda.append_weather_data,
+            21.0068,
+            -190.64,
+            date(2012, 1, 6))
+
     def test_column_names(self):
         """ Tests that all expected columns exist in the DataFrame
         """
@@ -117,7 +140,3 @@ class WeatherDateApiTest(unittest.TestCase):
         self.wda2.write_dataframe_to_file()
         self.assertTrue(os.path.isfile(self.non_existing_valid_file_path))
         os.remove(self.non_existing_valid_file_path)
-
-
-if __name__ == '__main__':
-    unittest.main()

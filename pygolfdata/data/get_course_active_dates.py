@@ -1,6 +1,8 @@
 """
 Script that retrieves data summarizing which courses hosted tournaments on which days, for
 use in retrieving weather data (because we want weather for each of these days in these locations).
+
+See docs/shotlink.md for related information about this code.
 """
 
 import shotlink

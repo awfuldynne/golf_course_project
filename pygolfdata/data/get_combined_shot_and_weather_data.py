@@ -4,6 +4,8 @@ combined data to the data directory for immediate use. The code uses weather dat
 retrieved, and combines it with shot/courselevel data from shotlink.get_shots_augmented. The
 weather data joined with any particular row is the weather data for the closest hour to when
 the shot in question was taken.
+
+See docs/shotlink.md for related information about this code.
 """
 
 from datetime import datetime

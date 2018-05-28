@@ -37,7 +37,6 @@ before_install:
 # list of commands to run to setup the environment
 install:
     - pip install coverage
-    - pip install coveralls
     - pip install codecov
     - pip install pylint
     - pip install -r requirements.txt
@@ -54,5 +53,4 @@ script:
 # generate a coverage report to send to back to user
 after_success:
     - coverage report
-    - coveralls
     - codecov

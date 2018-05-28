@@ -38,6 +38,7 @@ before_install:
 install:
     - pip install coverage
     - pip install coveralls
+    - pip install codecov
     - pip install pylint
     - pip install -r requirements.txt
 
@@ -54,3 +55,4 @@ script:
 after_success:
     - coverage report
     - coveralls
+    - codecov

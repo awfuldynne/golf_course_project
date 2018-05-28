@@ -6,9 +6,8 @@ TODO add links to particular files/directories.
 
 ## Data repository
 
-- TODO cover that we have a separate repo, why, and how the main repo incorporates it as the data dir using submodules, and that we use Git LFS; point to SHotLink dat section for organization (what files, etc.) and to the Travis section for how we get access in the CI VM.
-- TODO also cover that we have two repos, one for general exploration w/ more data and one with a more minimal set that we ended up using for our analysis (to make it quicker/cheaper to get things locally and in the CI VM)
- 
+The ShotLink data is private and only accessible to people that have been ok'd by the PGA Tour. So we keep the data in a private repo. The public repo includes this private repo as a [Git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules) and, since by default a git clone (TBD check this) automatically clones the contents of submodules, can access the data using the 'data' directory. The ShotLink data is explained in more detail below in the [ShotLink data](#ShotLink-Data) section. 
+
 ## ShotLink data
 
 [ShotLink](https://www.pgatour.com/stats/shotlinkintelligence/overview.html) contains detailed information about every stroke taken on most PGA Tour events, over many years. It's available for use in academic environments as specified on the ShotLink site. Each of the members of our project team obtained permission to use the data, and we stored the data in a separate and private GitHub repo, as explained in the [#ShotLink data] section above.
@@ -55,21 +54,23 @@ To get to this data set, we run the following code, all of which is introduced a
 
 ## Git submodules, Travis CI access to the private data repository
 
-This section explains how we got a Travis CI build working with both a public GitHub repo and a private GitHub repo, using Git submodules and GitHub's and Travis CI's support for deploy keys.
+This section explains how we got a Travis CI build working with both a public GitHub repo and a private GitHub repo, using Git submodules and GitHub's and Travis CI's support for deploy keys. You can do this without paying anything, as of May 2018.
 
-As explained above in the [Data repository](#Data repository) section, we store the PGA Tour ShotLink data in a private GitHub repo, separate from the code that lives in a public repo. We want the code in the public repo to have access to and know where the data lives, and for this to hold whether the code runs on a local machine or on a CI VM. The local machine is
+As explained above in the [Data repository](#Data repository) section, we store the PGA Tour ShotLink data in a private GitHub repo, separate from the code that lives in a public repo. We want the code in the public repo to have access to and know where the data lives, and for this to hold whether the code runs on a local machine or on a CI VM. 
 
+The local machine is easy: as long as you have access to the data repo, when you clone the repo (with any recent version of git), you'll automatically get the contents of the data repo - they live in the 'data' directory. 
 
+For the Travis CI machine, it's more complicated. Travis is free for public repos, and this this project's public, so Travis can do builds, for free. However, we want our builds to have access to private data - to the data in the private repo that exists as a submodule in the data directory. 
 
-- Travis docs https://docs.travis-ci.com/user/private-dependencies/ 
-- I’m going to try the deploy key approach. I think I need to do stuff for ex here: https://stackoverflow.com/questions/47012913/allow-access-to-private-dependencies-before-install?rq=1. I think the approach here is that we generate a public/private key pair locally. We tell the repo itself - the private repo - of the public side of this key, which we do w/ the web UI on github.com. Then, the Travis VM needs to have the private side of the key. To do this, we encrypt the private side of the key, add it to the parent/not private repo - it’s encrypted, so it can go in the repo (I think it’s encrypted using the completely separate public/private key pair that Travis maintains for each repo, and then in the .travis.yml before_install steps decrypt the file/get the cleartext private key and add it to ssh-agent. Then, when git tries to resolve submodules, it’ll work. (Side benefit of this approach is that I think the Git URL stays the same - it’s the ssh form - and so works when you have the repo locally w/ your own SSH and also works on Travis, w/o having to change)
-- To get a new key, I follow the instrs https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/#platform-mac - just the first part, since I only want the files (no need for ssh-agent on the machine I use to generate the key), no pass phrase. I used ** ssh-keygen -t rsa -b 4096 -C "TravisDeployKey"  ** and then saved to TravisDeployKey, which gave me two files: TravisDeployKey and TravisDeployKey.pub 
-- I can encrypt a file I think perhaps w/ steps at https://docs.travis-ci.com/user/encrypting-files. I ran ** travis encrypt-file TravisDeployKey ** after running travis login. This gave me a TravisDeployKey.enc file and said to use the following to decrypt, as part of the .travis.yml; it also reminds me to add the .enc file to the repo, but not to add the non-encrypted source 
-- **
-	openssl aes-256-cbc -K $encrypted_7eb1121a80e0_key -iv $encrypted_7eb1121a80e0_iv -in TravisDeployKey.enc -out TravisDeployKey -d 
-	**
+One possibility - this may work, but we haven't tried it - could be to make the core repo private, and pay Travis. We want the core repo to be public, and we don't want to pay Travis (this is a student/class project). 
 
-- install travis gem w/ sudo gem install travis
-- 
+So, we instead chose to use GitHub ['deploy keys'](https://developer.github.com/v3/guides/managing-deploy-keys/#deploy-keys). In a nutshell, we create a new SSH public/private key pair, we tell GitHub the public side of this key (using the github.com web UI), and we make sure the Travis CI build has access to the private side of the key. Then, when Travis pulls down the public repo it can get the private repo too.
 
-openssl aes-256-cbc -K $encrypted_8db6aac11b1c_key -iv $encrypted_8db6aac11b1c_iv -in TravisDeployKey.enc -out ../TravisDeployKey -d
+How do we get Travis the private key? Travis supports what it calls 'user keys', as documented on the [Travis CI private dependencies](https://docs.travis-ci.com/user/private-dependencies/) page. This would let us just upload the key. However, user keys only work on private repos. 
+
+Instead, we encrypt the private key - locally, on a client machine - using the public key associated with the Travis CI build. Then we check the encrypted key into the public repo. During the build - running on the Travis CI VM - we decrypt the key and add it to the ssh-agent, and then git clone - again, running on the VM - is able to succesfully pull down the contents of the private repo. 
+
+A few more details:
+- To get the new key - the one whose public key goes in the private repo's deploy keys section, and whose private key gets encrypted and checked in to the public repo, follow the instrs https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/#platform-mac. We just the first part, since we only want the files (no need for ssh-agent on the machine I use to generate the key). For example, I use ssh-keygen -t rsa -b 4096 -C "TravisDeployKey" and saved the result to TravisDeployKey, which produces two files: TravisDeployKey and TravisDeployKey.pub.
+- Then I encrypt the TravisDeployKey.pub file by following the steps at https://docs.travis-ci.com/user/encrypting-files. First I install the travis Ruby gem by running 'sudo gem install travis'. Then I run 'travis login' and then 'travis encrypt-file TravisDeployKey' (again, 'TravisDeployKey' is the private side of the GitHub SSH key). This gives me a TravisDeployKey.enc file and the exact code to use in the .travis.yml file to decrypt. I check in the TravisDeployKey.enc file to the public repo - since it's encrypted, only the Travis CI build - the only place that has the private key with which it's encrypted - can decrypt it.
+- Finally, I call openssl, chmod, start ssh-agent, and then ssh-add the decrypted key, in the [.travis.yml](.travis.yml) file. I put these steps in the before_install section. At this point the repo's already been cloned (without submodules, because I've specified 'submodules: False' elsewhere in the file), and so I can run 'git submodule update --init --recursive' to actually get the contents of the submodule.

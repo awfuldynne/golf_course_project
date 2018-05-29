@@ -4,7 +4,7 @@ This document outlines the data retrieved and used in this project, and explains
 
 ## Data repository
 
-The ShotLink data is private and only accessible to people that have been ok'd by the PGA Tour. As a result, we keep the data in a private repo to which only we have access. The public repo includes this private repo as a [Git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules) and, since by default a git clone automatically clones the contents of submodules, can access the data using the `data` directory. The ShotLink data is explained in more detail below in the [ShotLink data](#shotLink-data) section. 
+The ShotLink data is private and only accessible to people that have been ok'd by the PGA Tour. As a result, we keep the data in a private repo to which only we have access. The public repo includes this private repo as a [Git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules) and, since by default a git clone automatically clones the contents of submodules, can access the data using the `data` directory. The ShotLink data is explained in more detail below in the [ShotLink data](#shotlink-data) section. 
 
 ## ShotLink data
 

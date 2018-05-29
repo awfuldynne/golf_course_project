@@ -10,7 +10,7 @@ Pygolfdata is a tool to help users interested in correlating [PGA ShotLink](http
 To get started analyzing ShotLink and weather data:
 - If you don't have Git LFS installed already, [install it](https://git-lfs.github.com). 
 - You'll also need git and Python 3.x - we've developed with Python 3.6.
-- Clone the [repo](https://github.com/awfuldynne/golf_course_project). If you have access, this will pull down the data using the private data repo, as explained in the [Data.md](data.md) doc. (If you don't have access to the repo, you can still use the code. You'd need to retrieve the ShotLink data from the PGA Tour site yourself. The functions in the shotlink.py module take the path to the data as an argument, and assume a layout like that documented in the [data documentation](data.md).)
+- Clone the [repo](https://github.com/awfuldynne/golf_course_project). If you have access, this will pull down the data using the private data repo, as explained in the [Data.md](docs/data.md) doc. (If you don't have access to the repo, you can still use the code. You'd need to retrieve the ShotLink data from the PGA Tour site yourself. The functions in the shotlink.py module take the path to the data as an argument, and assume a layout like that documented in the [data documentation](docs/data.md).)
 - Unzip the data (we store it compressed to save disk space and network bandwidth, since Git LFS charges for both by the byte). In the 'data' directory, run 'python unzip.py'.
 - You'll want to set your working directory to the `golf_course_project` folder and run the `setup.py` file.
 ```
@@ -89,7 +89,7 @@ golf_course_project
 # Limitations
 The use of PGA Shotlink data is restricted to academic purposes and requires that a user fill out the linked form to request their own access.
 
-Access to the [WeatherUnderground](https://www.wunderground.com/weather/api/) and [Dark Sky](https://darksky.net/dev) APIs are gated by requesting an API key. While initially free, these API keys each have a limit on usage per day before requiringpayment.
+Access to the [Dark Sky](https://darksky.net/dev) API is gated by requesting an API key. While initially free, this API has a limit on usage per day before requiring payment.
 
 # Acknowledgements
 This library is possible in part to being Powered by [DarkSky API](https://darksky.net/poweredby/) and from the data generously offered by [PGA ShotLink](https://www.pgatour.com/stats/shotlinkintelligence/overview.html).

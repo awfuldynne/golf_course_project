@@ -219,8 +219,11 @@ def prepare_shots(df):
 
 def get_combined_data_from_file(filename):
     """Load combined shot and weather data from the specified file."""
-    return pd.read_csv(filename, dtype=COMBINED_DTYPES,
+    df = pd.read_csv(filename, dtype=COMBINED_DTYPES,
                        parse_dates=COMBINED_DATE_COLS, infer_datetime_format=True)
+    df['PrecipitationType'] = df['PrecipitationType'].cat.add_categories(['None'])
+    df['PrecipitationType'].fillna('None', inplace=True)
+    return df
 
 def get_courselevels(years, data_path):
     """

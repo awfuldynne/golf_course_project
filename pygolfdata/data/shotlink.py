@@ -3,7 +3,7 @@ Code to load and process PGA ShotLink data. See method documentation and tests f
 about the capabilities and operation of this code.
 
 See docs/shotlink.md for related information about this code.
-"""Examples/Analysis and Visualization.ipynb
+"""
 
 import collections
 from datetime import datetime

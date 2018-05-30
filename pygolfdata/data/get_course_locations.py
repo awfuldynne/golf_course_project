@@ -6,8 +6,9 @@ import zipfile
 import pandas as pd
 import requests
 
+
 def get_unique_values_from_zip(zip_file, csv_file, field_num):
-    ''' Function to read a compressed CSV file within a zip archive and extract
+    """ Function to read a compressed CSV file within a zip archive and extract
         unique values from a particular field, line by line, without unzipping.
         It will include the header in the result, if it exists.
 
@@ -18,7 +19,7 @@ def get_unique_values_from_zip(zip_file, csv_file, field_num):
 
     Returns:
         values: a Python set object containing the unique values found
-    '''
+    """
     values = set([])
     with zipfile.ZipFile(zip_file, 'r') as zf:
         with zf.open(csv_file) as fh:
@@ -29,37 +30,40 @@ def get_unique_values_from_zip(zip_file, csv_file, field_num):
     return values
 
 
-URL = "https://maps.googleapis.com/maps/api/geocode/json"
+def main():
+    url = "https://maps.googleapis.com/maps/api/geocode/json"
 
-# This is my API key attached to my own credit card
-API_KEY = 'insert_your_own_api_key_here'
+    # This is my API key attached to my own credit card
+    api_key = 'insert_your_own_api_key_here'
 
-# The file containing the golf course information
-#archive = '../../../golf_course_project_data/combined2012to2016.zip'
-ARCHIVE = '../golf_course_project_data/combined2012to2016.zip'
-FILE_NAME = 'combined_shots_and_weather_2012_2016.csv'
-FIELD_NAME = 'CourseName_shots'
+    # The file containing the golf course information
+    archive = '../../../golf_course_project_data/combined2012to2016.zip'
+    file_name = 'combined_shots_and_weather_2012_2016.csv'
+    field_name = 'CourseName_shots'
 
-# Extract the unique values directly from the 11th field in the zipped csv
-courses = get_unique_values_from_zip(ARCHIVE, FILE_NAME, 11)
-# Then remove the field name from the list of unique courses
-courses.remove(FIELD_NAME)
+    """Get a list of unique course names, then send a separate request for each course."""
+    courses = get_unique_values_from_zip(archive, file_name, 11)
+    # Then remove the field name from the list of unique courses
+    courses.remove(field_name)
 
-latlong = []
-results = None
+    latlong = []
+    results = None
 
-for name in courses:
-    params = {'key': API_KEY, 'address': name}
-    print(name)
-    r = requests.get(URL, params=params)
-    results = r.json()['results']
-    print(results)
-    location = results[0]['geometry']['location']
-    lat = location['lat']
-    long = location['lng']
-    formatted_address = results[0]['formatted_address']
-    latlong.append([name, lat, long, formatted_address])
+    for name in courses:
+        params = {'key': api_key, 'address': name}
+        print(name)
+        r = requests.get(url, params=params)
+        results = r.json()['results']
+        print(results)
+        location = results[0]['geometry']['location']
+        lat = location['lat']
+        long = location['lng']
+        formatted_address = results[0]['formatted_address']
+        latlong.append([name, lat, long, formatted_address])
 
-latlong_df = pd.DataFrame(data=latlong, columns=['name', 'lat', 'long', 'address'])
+    latlong_df = pd.DataFrame(data=latlong, columns=['name', 'lat', 'long', 'address'])
 
-latlong_df.to_csv('courses_geocoded.txt')
+    latlong_df.to_csv('courses_geocoded.txt')
+
+if __name__ == '__main__':
+    main()

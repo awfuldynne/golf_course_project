@@ -43,7 +43,7 @@ def main():
     # This is my API key attached to my own credit card
     api_key = 'insert_your_own_api_key_here'
 
-    """Get a list of unique course names, then send a separate request for each course."""
+    # Get a list of unique course names, then send a separate request for each course.
     courses = get_unique_values_from_zip(
         zip_file='../../../golf_course_project_data/combined2012to2016.zip',
         csv_file='combined_shots_and_weather_2012_2016.csv',
@@ -52,14 +52,13 @@ def main():
     # Then remove the field name from the list of unique courses
     courses.remove('CourseName_shots')
 
-    # 
     latlong = []
 
     for name in courses:
         params = {'key': api_key, 'address': name}
         print(name)
-        r = requests.get(url, params=params)
-        results = r.json()['results']
+        request = requests.get(url, params=params)
+        results = request.json()['results']
         print(results)
         location = results[0]['geometry']['location']
         lat = location['lat']

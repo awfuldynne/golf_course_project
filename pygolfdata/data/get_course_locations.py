@@ -8,7 +8,7 @@ import requests
 import shotlink
 
 def main():
-    # Get a list of unique course names
+    """Get a list of unique course names, then send a separate request for each course."""
     df = shotlink.get_shots(range(2012, 2018), 'data') # just get 2012-2017, for now at least
     courses = df['CourseName'].unique()
 
@@ -23,8 +23,8 @@ def main():
     for name in courses:
         params = {'key': api_key, 'address': name}
         print(name)
-        r = requests.get(url, params=params)
-        results = r.json()['results']
+        rg = requests.get(url, params=params)
+        results = rg.json()['results']
         print(results)
         location = results[0]['geometry']['location']
         lat = location['lat']
@@ -39,3 +39,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

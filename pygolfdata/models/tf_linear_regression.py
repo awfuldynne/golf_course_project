@@ -5,7 +5,6 @@ including input function, feature column construction, and model training.
 import math
 from matplotlib import pyplot as plt
 import numpy as np
-import pandas as pd
 from sklearn import metrics
 import tensorflow as tf
 from tensorflow.python.data import Dataset
@@ -13,16 +12,25 @@ from tensorflow.python.data import Dataset
 tf.logging.set_verbosity(tf.logging.ERROR)
 
 
-def my_input_fn(features, targets, batch_size=1, shuffle=True, num_epochs=None):
+def my_input_fn(
+        features,
+        targets,
+        batch_size=1,
+        shuffle=True,
+        num_epochs=None):
     """
-    Instruct TensorFlow how to preprocess the data, including converting the pandas feature into a dict of NumPy, then constructing a dataset object from our data before breaking it down into batches
+    Instruct TensorFlow how to preprocess the data,
+    including converting the pandas feature into a dict of NumPy,
+    then constructing a dataset object from our data
+    before breaking it down into batches
 
     Args:
       features: pandas DataFrame of features
       targets: pandas Series of targets
       batch_size: Size of batches to be passed to the model
       shuffle: True or False. Whether to shuffle the data.
-      num_epochs: Number of epochs for which data should be repeated. None = repeat indefinitely
+      num_epochs: Number of epochs for which data should be repeated.
+                    None = repeat indefinitely
     Returns:
       Tuple of (features, labels) for next data batch
     """
@@ -51,27 +59,29 @@ def construct_feature_columns(input_features):
     Returns:
         A set of feature columns
     """
-    return set([tf.feature_column.numeric_column(my_feature) for my_feature in input_features])
+    return set([tf.feature_column.numeric_column(my_feature)
+                for my_feature in input_features])
 
 
 def train_model(
-    learning_rate,
-    steps,
-    batch_size,
-    training_examples,
-    training_targets,
-    validation_examples,
-    validation_targets):
+        learning_rate,
+        steps,
+        batch_size,
+        training_examples,
+        training_targets,
+        validation_examples,
+        validation_targets):
     """
     Trains a linear regression model of multiple features.
 
-    In addition to training, this function also prints training progress information,
+    In addition to training, this function also prints training progress,
     as well as a plot of the training and validation loss over time.
 
     Args:
         learning_rate: A `float`, the learning rate.
-        steps: A non-zero `int`, the total number of training steps. A training step
-        consists of a forward and backward pass using a single batch.
+        steps: A non-zero `int`, the total number of training steps.
+        A training step consists of a forward
+        and backward pass using a single batch.
         batch_size: A non-zero `int`, the batch size.
         training_examples: A `DataFrame` containing selected columns from
         `combined_shotlink_weather_data` to use for training.
@@ -90,15 +100,15 @@ def train_model(
     steps_per_period = steps / periods
 
     # Create a linear regressor object.
-    my_optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)
-    my_optimizer = tf.contrib.estimator.clip_gradients_by_norm(my_optimizer, 5.0)
+    my_optimizer = tf.train.GradientDescentOptimizer(
+        learning_rate=learning_rate)
+    my_optimizer = tf.contrib.estimator.clip_gradients_by_norm(
+        my_optimizer, 5.0)
     linear_regressor = tf.estimator.LinearRegressor(
         feature_columns=construct_feature_columns(training_examples),
         optimizer=my_optimizer
     )
 
-    # Train the model, but do so inside a loop so that we can periodically assess
-    # loss metrics.
     print("Training model...")
     print("RMSE (on training data):")
     training_rmse = []
@@ -120,25 +130,30 @@ def train_model(
                 num_epochs=1,
                 shuffle=False)
         )
-        training_predictions = np.array([item['predictions'][0] for item in training_predictions])
+        training_predictions = np.array(
+            [item['predictions'][0] for item in training_predictions])
 
         validation_predictions = linear_regressor.predict(input_fn=my_input_fn(
             validation_examples,
             validation_targets,
             num_epochs=1,
             shuffle=False))
-        validation_predictions = np.array([item['predictions'][0] for item in validation_predictions])
+        validation_predictions = np.array(
+            [item['predictions'][0] for item in validation_predictions])
 
         # Compute training and validation loss.
-        training_root_mean_squared_error = math.sqrt(
+        training_rmse = math.sqrt(
             metrics.mean_squared_error(training_predictions, training_targets))
-        validation_root_mean_squared_error = math.sqrt(
-            metrics.mean_squared_error(validation_predictions, validation_targets))
+        validation_rmse = math.sqrt(
+            metrics.mean_squared_error(
+                validation_predictions,
+                validation_targets
+                ))
         # Occasionally print the current loss.
-        print("{0}: {1:.2f}".format(period, training_root_mean_squared_error))
+        print("{0}: {1:.2f}".format(period, training_rmse))
         # Add the loss metrics from this period to our list.
-        training_rmse.append(training_root_mean_squared_error)
-        validation_rmse.append(validation_root_mean_squared_error)
+        training_rmse.append(training_rmse)
+        validation_rmse.append(validation_rmse)
     print("Model training finished.")
 
     # Output a graph of loss metrics over periods.

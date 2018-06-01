@@ -110,38 +110,6 @@ def train_model(
     )
 
     # Create input functions.
-    # def training_input_fn(
-    #         training_examples,
-    #         training_targets,
-    #         batch_size=batch_size):
-    #     return my_input_fn(
-    #         training_examples,
-    #         training_targets,
-    #         batch_size)
-
-    # def predict_training_input_fn(
-    #         training_examples,
-    #         training_targets,
-    #         num_epochs=1,
-    #         shuffle=False):
-    #     return my_input_fn(
-    #         training_examples,
-    #         training_targets,
-    #         num_epochs,
-    #         shuffle)
-
-    # def predict_validation_input_fn(
-    #         validation_examples,
-    #         validation_targets,
-    #         num_epochs=1,
-    #         shuffle=False):
-    #     return my_input_fn(
-    #         validation_examples,
-    #         validation_targets,
-    #         num_epochs,
-    #         shuffle)
-
-    # Create input functions.
     training_input_fn = lambda: my_input_fn(
         training_examples,
         training_targets,

@@ -109,35 +109,74 @@ def train_model(
         optimizer=my_optimizer
     )
 
+    # Create input functions.
+    # def training_input_fn(
+    #         training_examples,
+    #         training_targets,
+    #         batch_size=batch_size):
+    #     return my_input_fn(
+    #         training_examples,
+    #         training_targets,
+    #         batch_size)
+
+    # def predict_training_input_fn(
+    #         training_examples,
+    #         training_targets,
+    #         num_epochs=1,
+    #         shuffle=False):
+    #     return my_input_fn(
+    #         training_examples,
+    #         training_targets,
+    #         num_epochs,
+    #         shuffle)
+
+    # def predict_validation_input_fn(
+    #         validation_examples,
+    #         validation_targets,
+    #         num_epochs=1,
+    #         shuffle=False):
+    #     return my_input_fn(
+    #         validation_examples,
+    #         validation_targets,
+    #         num_epochs,
+    #         shuffle)
+
+    # Create input functions.
+    training_input_fn = lambda: my_input_fn(
+        training_examples,
+        training_targets,
+        batch_size=batch_size)
+
+    predict_training_input_fn = lambda: my_input_fn(
+        training_examples,
+        training_targets,
+        num_epochs=1,
+        shuffle=False)
+
+    predict_validation_input_fn = lambda: my_input_fn(
+        validation_examples,
+        validation_targets,
+        num_epochs=1,
+        shuffle=False)
+
     print("Training model...")
     print("RMSE (on training data):")
-    training_rmse = []
-    validation_rmse = []
+    training_rmse_list = []
+    validation_rmse_list = []
     for period in range(0, periods):
         # Train the model, starting from the prior state.
         linear_regressor.train(
-            input_fn=my_input_fn(
-                training_examples,
-                training_targets,
-                batch_size=batch_size),
+            input_fn=training_input_fn,
             steps=steps_per_period,
         )
-        # Take a break and compute predictions.
+
         training_predictions = linear_regressor.predict(
-            input_fn=my_input_fn(
-                training_examples,
-                training_targets,
-                num_epochs=1,
-                shuffle=False)
-        )
+            input_fn=predict_training_input_fn)
         training_predictions = np.array(
             [item['predictions'][0] for item in training_predictions])
 
-        validation_predictions = linear_regressor.predict(input_fn=my_input_fn(
-            validation_examples,
-            validation_targets,
-            num_epochs=1,
-            shuffle=False))
+        validation_predictions = linear_regressor.predict(
+            input_fn=predict_validation_input_fn)
         validation_predictions = np.array(
             [item['predictions'][0] for item in validation_predictions])
 
@@ -152,8 +191,8 @@ def train_model(
         # Occasionally print the current loss.
         print("{0}: {1:.2f}".format(period, training_rmse))
         # Add the loss metrics from this period to our list.
-        training_rmse.append(training_rmse)
-        validation_rmse.append(validation_rmse)
+        training_rmse_list.append(training_rmse)
+        validation_rmse_list.append(validation_rmse)
     print("Model training finished.")
 
     # Output a graph of loss metrics over periods.

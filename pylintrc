@@ -9,7 +9,7 @@ attr-rgx=[a-z_][a-z0-9_]{1,30}$
 
 # customize maximum arguments and local variables
 max-args=7
-max-locals=16
+max-locals=25
 
 # disable tensorflow-specific errors
 ignored-modules=tensorflow

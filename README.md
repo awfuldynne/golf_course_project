@@ -28,7 +28,7 @@ import pandas as pd
 from pygolfdata.data import shotlink
 
 # load just the 2016 data
-d = shotlink.get_combined_data_from_file('data/combined_shots_and_weather_2016_2016.csv')
+d = shotlink.get_combined_data_from_file('../data/combined_shots_and_weather_2016_2016.csv')
 ```
 
 # Data

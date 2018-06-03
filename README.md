@@ -79,8 +79,8 @@ golf_course_project
 │   └ weather
 │       ├ core.py
 │       ├ __init__.py
-│       ├ test_data
-│       └   └ weather_date_api_test.csv
+│       └ test_data
+│           └ weather_date_api_test.csv
 ├ .coveragerc
 ├ .gitignore
 ├ .gitmodules

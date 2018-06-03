@@ -21,7 +21,7 @@ python setup.py install
 ```
 pip install -r requirements.txt
 ```
-- Now you can load already-prepared data by importing the shotlink module and calling get_combined_data_from_file, as shown in the [Analysis Notebook Start Exampler](https://github.com/awfuldynne/golf_course_project/blob/master/Examples/Analysis%20Notebook%20Start%20Example.ipynb) notebook. For example:
+- Now you can load already-prepared data by importing the shotlink module and calling get_combined_data_from_file, as shown in the [Analysis Notebook Start Example](https://github.com/awfuldynne/golf_course_project/blob/master/Examples/Analysis%20Notebook%20Start%20Example.ipynb) notebook. For example:
 ```
 import pandas as pd
 

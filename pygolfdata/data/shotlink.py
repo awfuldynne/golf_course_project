@@ -1,6 +1,8 @@
 """
 Code to load and process PGA ShotLink data. See method documentation and tests for more information
 about the capabilities and operation of this code.
+
+See docs/shotlink.md for related information about this code.
 """
 
 import collections

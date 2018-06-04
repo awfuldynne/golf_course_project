@@ -14,3 +14,4 @@ six
 tensorboard
 tensorflow
 urllib3
+seaborn

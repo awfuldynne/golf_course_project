@@ -69,7 +69,8 @@ golf_course_project
 │   │   └ shotlink.py
 |   ├ models
 |   |   ├ __init__.py
-|   |   └ tf_linear_regression.py
+|   |   ├ tf_linear_regression.py
+|   |   └ vis_tools.py
 │   ├ __init__.py
 │   ├ run_tests.sh
 │   ├ tests

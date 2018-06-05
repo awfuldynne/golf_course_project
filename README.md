@@ -53,9 +53,6 @@ golf_course_project
 │   ├ data.md
 |   ├ Data515_Final_Presentation.pdf
 │   ├ design.md
-│   ├ example_document.txt
-│   ├ images
-│   │   └ pga_web_scraping_example.png
 │   ├ shotlink.md
 │   ├ Weather Data APIs - tech review.pdf
 │   └ weather_date_api_doc.md

@@ -33,12 +33,12 @@ class VisTests(unittest.TestCase):
     def test_scatter(self):
         '''Tests the scatter plotting function
         '''
-        vis_tools.plot_strokes_gained_scatter(self.df, 'PrecipitationIntensity')
+        self.assertTrue(vis_tools.plot_strokes_gained_scatter(self.df, 'PrecipitationIntensity'))
 
     def test_heatmap(self):
         '''Tests the heatmap function
         '''
-        vis_tools.plot_heatmaps(self.df)
+        self.assertTrue(vis_tools.plot_heatmaps(self.df))
 
 if __name__ == '__main__':
     unittest.main()

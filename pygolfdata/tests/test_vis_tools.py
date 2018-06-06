@@ -6,9 +6,10 @@ Classes:
 """
 import unittest
 
-# pylint isn't seeing the shotlink module or models module here, while these tests run fine, so it's a false pos
-from data import shotlink # pylint: disable=no-name-in-module
-from models import vis_tools # pylint: disable=no-name-in-module
+#pylint isn't seeing the shotlink module or models module here, while these tests run fine, 
+#so it's a false pos
+from data import shotlink # pylint: disable=import-error
+from models import vis_tools
 
 
 # DATA_PATH points to the full data, TEST_DATA_PATH to files w/ the same

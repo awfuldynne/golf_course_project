@@ -4,9 +4,10 @@ Fuctions:
     plot_strokes_gained_scatter
     plot_heatmaps
 '''
-
+import matplotlib
 import matplotlib.pyplot as plt
 import seaborn as sns
+matplotlib.use('Agg')
 
 
 def plot_strokes_gained_scatter(df, x_var, by_cat=True):

@@ -5,6 +5,8 @@ Classes:
     VisTests: Unit tests visualization functions in vis_tools.py
 """
 import unittest
+import matplotlib
+matplotlib.use('Agg')
 
 #pylint isn't seeing the shotlink module or models module here, while these tests run fine,
 #so it's a false pos

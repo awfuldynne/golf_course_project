@@ -4,14 +4,17 @@ Unit tests functions in the vis_tools.py module
 Classes:
     VisTests: Unit tests visualization functions in vis_tools.py
 """
+
 import unittest
 import matplotlib
+
+from data import shotlink # pylint: disable=no-name-in-module
+from models import vis_tools # pylint: disable=import-error
+
 matplotlib.use('Agg')
 
 #pylint isn't seeing the shotlink module or models module here, while these tests run fine,
 #so it's a false pos
-from data import shotlink # pylint: disable=no-name-in-module
-from models import vis_tools # pylint: disable=import-error
 
 
 # DATA_PATH points to the full data, TEST_DATA_PATH to files w/ the same

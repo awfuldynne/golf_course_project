@@ -12,6 +12,42 @@ from tensorflow.python.data import Dataset
 tf.logging.set_verbosity(tf.logging.ERROR)
 
 
+def construct_cross_feature_columns(df, feature_a, feature_b):
+    """
+    Construct TensorFlow Feature Columns.
+
+    Args:
+        df: pandas DataFrame of features
+        feature_a: label of the first feature
+        feature_b: label of the second feature
+    """
+    col_a = tf.feature_column.numeric_column(feature_a)
+    col_b = tf.feature_column.numeric_column(feature_b)
+
+    bucketized_a = tf.feature_column.bucketized_column(
+        col_a, get_quantile_based_boundaries(df[feature_a], 10))
+    bucketized_b = tf.feature_column.bucketized_column(
+        col_b, get_quantile_based_boundaries(df[feature_b], 2))
+
+    a_x_b = tf.feature_column.crossed_column(
+        set([bucketized_a, bucketized_b]), hash_bucket_size=1000)
+
+    return set([bucketized_a, bucketized_b, a_x_b])
+
+
+def get_quantile_based_boundaries(feature_values, num_buckets):
+    """
+    A helper function to get bucket boundaries before it is passed to TensorFlow
+
+    Args:
+        feature_values: pandas Series of features to be bucketed
+        num_buckets: number of buckets where the features go to
+    """
+    boundaries = np.arange(1.0, num_buckets) / num_buckets
+    quantiles = feature_values.quantile(boundaries)
+    return [quantiles[q] for q in quantiles.keys()]
+
+
 def my_input_fn(
         features,
         targets,
@@ -70,7 +106,9 @@ def train_model(
         training_examples,
         training_targets,
         validation_examples,
-        validation_targets):
+        validation_targets,
+        feature_columns=None,
+        use_ftrl=False):
     """
     Trains a linear regression model of multiple features.
 
@@ -91,6 +129,9 @@ def train_model(
         `combined_shotlink_weather_data` to use for validation/test.
         validation_targets: A `DataFrame` containing selected columns from
         `combined_shotlink_weather_data` to use for validation/test.
+        `feature_columns`: A set of input feature columns
+        `use_ftrl`: To use FTRL optimization or the standard Gradient Descent
+        optimization
 
     Returns:
         A `LinearRegressor` object trained on the training data.
@@ -99,13 +140,19 @@ def train_model(
     periods = 10
     steps_per_period = steps / periods
 
-    # Create a linear regressor object.
-    my_optimizer = tf.train.GradientDescentOptimizer(
-        learning_rate=learning_rate)
+    # Create a linear regressor object either using FTRL or Gradient Descent
+    if use_ftrl:
+        my_optimizer = tf.train.FtrlOptimizer(learning_rate=learning_rate)
+    else:
+        my_optimizer = tf.train.GradientDescentOptimizer(
+            learning_rate=learning_rate)
     my_optimizer = tf.contrib.estimator.clip_gradients_by_norm(
         my_optimizer, 5.0)
+    if not feature_columns:
+        feature_columns = construct_feature_columns(training_examples)
+
     linear_regressor = tf.estimator.LinearRegressor(
-        feature_columns=construct_feature_columns(training_examples),
+        feature_columns,
         optimizer=my_optimizer
     )
 
